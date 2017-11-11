@@ -1,0 +1,25 @@
+plugins {
+    id'java'
+    id'application'
+    id'com.github.johnrengelman.shadow' version '1.2.4'
+}
+
+mainClassName = 'uk.co.rascagneres.spacexbot.Bot'
+
+version '1.0'
+def jdaVersion = '3.3.1_303'
+def jrawVersion = '0.9.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "net.dv8tion:JDA:$jdaVersion"
+    compile "net.dean.jraw:JRAW:$jrawVersion"
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
+}
+
+compileJava.options.encoding = 'UTF-8'

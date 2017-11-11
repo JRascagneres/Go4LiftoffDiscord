@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SpaceXBot.iml" filepath="$PROJECT_DIR$/.idea/modules/SpaceXBot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SpaceXBot_main.iml" filepath="$PROJECT_DIR$/.idea/modules/SpaceXBot_main.iml" group="SpaceXBot" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/SpaceXBot_test.iml" filepath="$PROJECT_DIR$/.idea/modules/SpaceXBot_test.iml" group="SpaceXBot" />
+    </modules>
+  </component>
+</project>
