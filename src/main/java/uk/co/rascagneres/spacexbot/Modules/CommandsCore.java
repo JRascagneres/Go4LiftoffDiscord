@@ -6,6 +6,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import uk.co.rascagneres.spacexbot.Config.Config;
 import uk.co.rascagneres.spacexbot.Config.ConfigReader;
+import uk.co.rascagneres.spacexbot.Services.TwitterService;
 
 import java.awt.*;
 
@@ -38,11 +39,5 @@ public class CommandsCore extends ListenerAdapter {
             embedBuilder.setColor(new Color(51, 153, 255));
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
-
-        if(command[0].equalsIgnoreCase(prefix + "test")){
-            //System.out.println(configReader.getChannelIDs());
-            System.out.println(configReader.getPrefix());
-        }
-
     }
 }

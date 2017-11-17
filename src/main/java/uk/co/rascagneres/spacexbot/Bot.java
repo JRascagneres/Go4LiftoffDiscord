@@ -11,15 +11,20 @@ import uk.co.rascagneres.spacexbot.Config.ConfigReader;
 import uk.co.rascagneres.spacexbot.Modules.CommandsCore;
 import uk.co.rascagneres.spacexbot.Modules.LaunchCore;
 import uk.co.rascagneres.spacexbot.Modules.RedditModule;
+import uk.co.rascagneres.spacexbot.Modules.TwitterModule;
 import uk.co.rascagneres.spacexbot.Services.RedditService;
+import uk.co.rascagneres.spacexbot.Services.TwitterService;
 
 import javax.security.auth.login.LoginException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 
 /**
  * Created by jacqu on 10/11/2017.
  */
 public class Bot extends ListenerAdapter{
+
     private static JDA jda;
 
     public static void main(String [] args){
@@ -31,13 +36,17 @@ public class Bot extends ListenerAdapter{
             jda.addEventListener(new Bot());
             jda.addEventListener(new LaunchCore());
             jda.addEventListener(new RedditModule());
+            jda.addEventListener(new TwitterModule());
 
         } catch (LoginException | InterruptedException | RateLimitedException | IllegalArgumentException e) {
             e.printStackTrace();
         }
 
-        Timer timer = new Timer();
-        timer.schedule(new RedditService(jda), 0, 10000);
+        Timer redditTimer = new Timer();
+        redditTimer.schedule(new RedditService(jda), 0, 10000);
+
+        Timer twitterTimer = new Timer();
+        twitterTimer.schedule(new TwitterService(jda), 0, 10000);
     }
 
     public void onGuildJoinEvent(GuildJoinEvent event){

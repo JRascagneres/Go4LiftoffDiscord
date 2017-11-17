@@ -24,6 +24,10 @@ public class ConfigReader {
         return config.redditChannelIDs;
     }
 
+    public Map<String, List<Long>> getTwitterMap(){
+        return config.twitterChannelIDs;
+    }
+
     public String getToken(){
         return config.token;
     }
@@ -36,6 +40,10 @@ public class ConfigReader {
         return config.redditData;
     }
 
+    public Map<String, String> getTwitterData(){
+        return config.twitterData;
+    }
+
     public void addRedditChannelID(String subRedditName, Long channelID){
         List<Long> list = new LinkedList<>();
         if (config.redditChannelIDs.get(subRedditName) != null) {
@@ -46,8 +54,23 @@ public class ConfigReader {
         saveJSONFile();
     }
 
-    public void removeRedditChannelID(Long channelID){
-        config.redditChannelIDs.remove(channelID);
+    public void removeRedditChannelID(String subRedditName, Long channelID){
+        config.redditChannelIDs.get(subRedditName).remove(channelID);
+        saveJSONFile();
+    }
+
+    public void addTwitter(String twitterUser, Long channelID){
+        List<Long> list = new LinkedList<>();
+        if (config.twitterChannelIDs.get(twitterUser) != null){
+            list.addAll(config.twitterChannelIDs.get(twitterUser));
+        }
+        list.add(channelID);
+        config.twitterChannelIDs.put(twitterUser, list);
+        saveJSONFile();
+    }
+
+    public void removeTwitter(String twitterUser, Long channelID){
+        config.twitterChannelIDs.get(twitterUser).remove(channelID);
         saveJSONFile();
     }
 

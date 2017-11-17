@@ -10,6 +10,15 @@ import uk.co.rascagneres.spacexbot.LaunchData.LaunchLibrary;
 import uk.co.rascagneres.spacexbot.Utilities.Utils;
 
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import static java.lang.StrictMath.min;
 
 public class LaunchCore extends ListenerAdapter{
     ConfigReader configReader = new ConfigReader();
@@ -27,12 +36,18 @@ public class LaunchCore extends ListenerAdapter{
 
         if(command[0].equalsIgnoreCase(prefix + "nextLaunch") || command[0].equalsIgnoreCase(prefix + "nl")){
             Launch nextLaunch = Utils.getNextLaunch();
+            String[] launchName = nextLaunch.name.split("\\|");
+            List<String> dateInfo = getDateInfo(nextLaunch);
+            String newNET = dateInfo.get(0);
+            String launchInText = dateInfo.get(1);
             embedBuilder.setAuthor("Next Launch", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
             embedBuilder.setThumbnail(nextLaunch.rocket.imageURL);
             embedBuilder.setColor(new Color(51, 153, 255));
             if (nextLaunch instanceof Launch){
-                embedBuilder.appendDescription("**Name: **" + nextLaunch.name  + "\n");
-
+                embedBuilder.appendDescription("**Name: **" + launchName[0]  + "\n");
+                embedBuilder.appendDescription("**Payload: **" + launchName[1]  + "\n");
+                embedBuilder.appendDescription("**NET: **" + newNET + "\n");
+                embedBuilder.appendDescription(launchInText);
             }else{
                 embedBuilder.appendDescription("**ERROR, Report to developer**");
             }
@@ -40,26 +55,37 @@ public class LaunchCore extends ListenerAdapter{
         }
 
         if(command[0].equalsIgnoreCase(prefix + "listLaunches") || command[0].equalsIgnoreCase(prefix + "ll")){
-            int numberOfLaunches = 10;
-
-            if (command.length > 1){
-                numberOfLaunches = Integer.parseInt(command[1]);
-            }
-
+            int numberOfLaunches = min(Integer.parseInt(command[1]),10);
             LaunchLibrary launchLibrary = Utils.getLaunches(numberOfLaunches);
-            Launch nextLaunch = launchLibrary.launches.get(0);
-
             embedBuilder.setAuthor("Upcoming Launches", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-            embedBuilder.setThumbnail(nextLaunch.rocket.imageURL);
             embedBuilder.setColor(new Color(51, 153, 255));
-
             for (int i = 0; i < launchLibrary.count; i++){
+                List<String> dateInfo = getDateInfo(launchLibrary.launches.get(i));
                 Launch thisLaunch = launchLibrary.launches.get(i);
                 String[] launchName = thisLaunch.name.split("\\|");
-                embedBuilder.addField(launchName[0], "**" + launchName[1] + "**\nLaunch NET: " + thisLaunch.net, false);
+                embedBuilder.addField("**Name: **" + launchName[0], "\n**Payload: **" + launchName[1]  + "\n**NET: **" + dateInfo.get(0) + "\n" + dateInfo.get(1), false);
             }
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
+    }
+
+    public List<String> getDateInfo(Launch thisLaunch){
+        Date date = new Date();
+        Instant now = Instant.now();
+        try {
+            date = new SimpleDateFormat("MMMM dd, yyyy HH:mm:ss").parse(thisLaunch.net);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        String newNET = new SimpleDateFormat("dd MMMM HH:mm:ss").format(date);
+        Duration timeToLaunch = Duration.between(now, date.toInstant());
+        String days = String.valueOf(timeToLaunch.toHours() / 24);
+        String hours = String.valueOf(timeToLaunch.toHours() - (Long.parseLong(days) * 24));
+        String minutes = String.valueOf(timeToLaunch.toMinutes() - (Long.parseLong(hours) * 60) - (Long.parseLong(days) * 24 * 60));
+        List<String> dateInfo = new LinkedList<String>();
+        dateInfo.add(newNET);
+        dateInfo.add("**Launch In: **" + days + " Days " + hours + " hours " + minutes + " minutes");
+        return dateInfo;
     }
 }

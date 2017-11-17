@@ -37,12 +37,6 @@ public class Utils {
     }
 
     public static Launch getNextLaunch(){
-        try{
-            LaunchLibrary launchLibrary = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue(getText("https://launchlibrary.net/1.3/launch/next/1"), LaunchLibrary.class);
-            return launchLibrary.launches.get(0);
-        }catch (Exception e){
-            e.printStackTrace();
-            return null;
-        }
+        return getLaunches(1).launches.get(0);
     }
 }

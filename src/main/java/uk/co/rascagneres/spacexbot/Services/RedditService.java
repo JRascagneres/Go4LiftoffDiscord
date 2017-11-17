@@ -16,6 +16,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+import static com.google.common.primitives.Ints.min;
+
 public class RedditService extends TimerTask {
 
     //boolean firstRun = true;
@@ -30,6 +32,10 @@ public class RedditService extends TimerTask {
 
     public RedditService (JDA jda){
         this.jda = jda;
+
+    }
+
+    public void initialise(){
         ConfigReader configReader = new ConfigReader();
         Map<String, List<Long>> redditChannelMap = configReader.getRedditMap();
         for (Map.Entry<String, List<Long>> entry : redditChannelMap.entrySet()) {
@@ -44,18 +50,18 @@ public class RedditService extends TimerTask {
         Map<String, List<Long>> redditChannelMap = configReader.getRedditMap();
         for (Map.Entry<String, List<Long>> entry : redditChannelMap.entrySet()) {
             String subreddit = entry.getKey();
+            if(!firstRunMap.containsKey(subreddit)){
+                initialise();
+            }
+
             boolean firstRun = firstRunMap.get(subreddit);
+
             List<String> visited = visitedMap.get(subreddit);
 
             if (firstRun == true) {
                 List<Submission> posts = getPosts(subreddit, initialPostCheck);
-                for (int i = 1; i < initialPostCheck; i++) {
-                    visited.add(posts.get(i).getId());
-
-                    List<String> list = new LinkedList<>();
-                    list.addAll(visited);
-                    visitedMap.put(subreddit, list);
-
+                for (int i = 0; i < initialPostCheck; i++) {
+                    visitedMap.get(subreddit).add(posts.get(i).getId());
                 }
                 firstRunMap.put(subreddit, false);
             }
@@ -94,10 +100,11 @@ public class RedditService extends TimerTask {
                         Long channelID = redditChannelIDs.get(j);
                         EmbedBuilder embedBuilder = new EmbedBuilder();
                         if (submission.isSelfPost()) {
+                            int upperBound = min(submission.getSelftext().length(), 800);
                             embedBuilder.setTitle("New post in /r/" + submission.getSubredditName() + " by " + submission.getAuthor());
                             embedBuilder.setDescription("[" + submission.getTitle() + "](" + submission.getShortURL() + ")");
                             embedBuilder.setColor(new Color(51, 153, 255));
-                            embedBuilder.addField("Post Text: ", submission.getSelftext(), false);
+                            embedBuilder.addField("Post Text: ", submission.getSelftext().substring(0, upperBound), false);
                             embedBuilder.addField("Reddit Post: ", submission.getShortURL(), false);
                             embedBuilder.setThumbnail(submission.getThumbnail());
                         } else {

@@ -6,8 +6,7 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import uk.co.rascagneres.spacexbot.Config.Config;
 import uk.co.rascagneres.spacexbot.Config.ConfigReader;
 
-
-public class RedditModule extends ListenerAdapter{
+public class TwitterModule extends ListenerAdapter{
     ConfigReader configReader = new ConfigReader();
     private String prefix = configReader.getPrefix();
 
@@ -21,21 +20,21 @@ public class RedditModule extends ListenerAdapter{
         if(!command[0].startsWith(prefix))
             return;
 
-        if(command[0].equalsIgnoreCase(prefix + "addReddit")){
+        if(command[0].equalsIgnoreCase(prefix + "addTwitter")){
             Long channelID = event.getChannel().getIdLong();
-            String subreddit = command[1];
+            String twitterUser = command[1];
             ConfigReader configReader = new ConfigReader();
-            configReader.addRedditChannelID(subreddit, channelID);
-            embedBuilder.setAuthor("Channel Added", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+            configReader.addTwitter(twitterUser, channelID);
+            embedBuilder.setAuthor("Twitter Added", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
-        if(command[0].equalsIgnoreCase(prefix + "removeReddit")){
+        if(command[0].equalsIgnoreCase(prefix + "removeTwitter")){
             Long channelID = event.getChannel().getIdLong();
-            String subreddit = command[1];
+            String twitterUser = command[1];
             ConfigReader configReader = new ConfigReader();
-            configReader.removeRedditChannelID(subreddit, channelID);
-            embedBuilder.setAuthor("Channel Removed", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+            configReader.removeTwitter(twitterUser, channelID);
+            embedBuilder.setAuthor("Twitter Removed", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
