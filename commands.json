@@ -1,0 +1,13 @@
+{"commandsMap":{"Cat1":
+				[{
+				"name":"name",
+				"command":"command",
+				"commandAlias":"alias",
+				"parameters":"param",
+				"description":"desc"},
+				{"name":"name",
+				"command":"command",
+				"commandAlias":"alias",
+				"parameters":"param",
+				"description":"desc"}]
+				}}

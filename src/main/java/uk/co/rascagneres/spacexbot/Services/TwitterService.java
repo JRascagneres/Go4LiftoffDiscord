@@ -51,7 +51,7 @@ public class TwitterService extends TimerTask{
 
             if (firstRunMap.get(twitterUser) == true){
                 List<Status> tweets = getMainTweetsOnly(twitterUser);
-                for (int i = 1; i < initialTweetCheck; i++){
+                for (int i = 0; i < initialTweetCheck; i++){
                     List<Long> checked = checkedMap.get(twitterUser);
                     checked.add(tweets.get(i).getId());
                     checkedMap.put(twitterUser, checked);
