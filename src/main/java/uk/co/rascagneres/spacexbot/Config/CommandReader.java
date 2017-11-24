@@ -22,7 +22,7 @@ public class CommandReader {
         }
     }
 
-    public Map<String, List<Command>> getCommandsMap(){
+    public List<Map<String, List<Command>>> getCommandsMap(){
         return commands.commandsMap;
     }
 

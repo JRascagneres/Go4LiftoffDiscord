@@ -1,13 +1,54 @@
-{"commandsMap":{"Cat1":
+{"commandsMap":[{"Core Commands":
 				[{
-				"name":"name",
-				"command":"command",
-				"commandAlias":"alias",
-				"parameters":"param",
-				"description":"desc"},
-				{"name":"name",
-				"command":"command",
-				"commandAlias":"alias",
-				"parameters":"param",
-				"description":"desc"}]
-				}}
+				"name":"Ping",
+				"command":"ping",
+				"commandAlias":"",
+				"parameters":"",
+				"description":"Returns the ping of the bot to the Discord server"},
+				{"name":"Info",
+				"command":"info",
+				"commandAlias":"",
+				"parameters":"",
+				"description":"Returns information about the Discord bot"},
+				{"name":"Help",
+				"command":"help",
+				"commandAlias":"",
+				"parameters":"",
+				"description":"Messages user with a list of commands and help documentation"}]
+				},
+				{"Launch Commands":
+				[{
+				"name":"Next Launch",
+				"command":"nextLaunch",
+				"commandAlias":"nl",
+				"parameters":"",
+				"description":"Returns the information for the next planned launch from Earth"},
+				{"name":"List Launches",
+				"command":"listLaunches",
+				"commandAlias":"ll",
+				"parameters":"Number Of Launches To Display (Max 10)",
+				"description":"Returns the information for a number of planned launches from Earth"}]},
+				{"Reddit Commands":
+				[{
+				"name":"Add SubReddit",
+				"command":"addReddit",
+				"commandAlias":"",
+				"parameters":"SubReddit to add",
+				"description":"Adds the given subreddit read outs to the channel the command was ran in"},
+				{"name":"Remove Subreddit",
+				"command":"removeReddit",
+				"commandAlias":"",
+				"parameters":"SubReddit to remove",
+				"description":"Removes the given subreddit read outs to the channel the command was ran in"}]},
+				{"Twitter Commands":
+				[{
+				"name":"Add Twitter",
+				"command":"addReddit",
+				"commandAlias":"",
+				"parameters":"Twitter to add",
+				"description":"Adds the given twitter user read outs to the channel the command was ran in"},
+				{"name":"Remove Twitter",
+				"command":"removeReddit",
+				"commandAlias":"",
+				"parameters":"Twitter to remove",
+				"description":"Removes the given twitter user read outs to the channel the command was ran in"}]}]}

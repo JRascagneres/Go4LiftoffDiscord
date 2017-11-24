@@ -49,13 +49,26 @@ public class CommandsCore extends ListenerAdapter {
         if(command[0].equalsIgnoreCase(prefix + "help")){
             embedBuilder.setAuthor("Commands List", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
             CommandReader commandReader = new CommandReader();
-            Map<String, List<Command>> commandsMap = commandReader.getCommandsMap();
-            for (Map.Entry<String, List<Command>> entry : commandsMap.entrySet()) {
-                String category = entry.getKey();
-                List<Command> thisCommand = entry.getValue();
-                embedBuilder.addField("**" + category + "**", "", false);
-                for(int i = 0; i < thisCommand.size(); i++){
-                    embedBuilder.addField(thisCommand.get(i).name, thisCommand.get(i).description, false);
+            List<Map<String, List<Command>>> commandsListMap = commandReader.getCommandsMap();
+            for (int i = 0; i < commandsListMap.size(); i++) {
+                Map<String, List<Command>> commandsMap = commandsListMap.get(i);
+                for (Map.Entry<String, List<Command>> entry : commandsMap.entrySet()) {
+                    String category = entry.getKey();
+                    List<Command> thisCommand = entry.getValue();
+                    embedBuilder.appendDescription("**" + category + "** \n");
+                    for (int j = 0; j < thisCommand.size(); j++) {
+                        embedBuilder.appendDescription("**" + thisCommand.get(j).name + "**\n");
+                        String alias = "";
+                        if(thisCommand.get(j).commandAlias != "") {
+                            alias = ", " + prefix + thisCommand.get(j).commandAlias;
+                        }
+                        embedBuilder.appendDescription(prefix + thisCommand.get(j).command + alias + "\n");
+
+                        if(thisCommand.get(j).parameters != ""){
+                            embedBuilder.appendDescription("Parameters: " + thisCommand.get(j).parameters);
+                        }
+                        embedBuilder.appendDescription(thisCommand.get(j).description + "\n\n");
+                    }
                 }
             }
             event.getMember().getUser().openPrivateChannel().queue( (channel) -> channel.sendMessage(embedBuilder.build()).queue() );

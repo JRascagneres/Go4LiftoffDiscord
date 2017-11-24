@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Map;
 
 public class Commands {
-    public Map<String, List<Command>> commandsMap;
+    public List<Map<String, List<Command>>> commandsMap;
 }
