@@ -12,6 +12,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
+import static jdk.nashorn.internal.objects.NativeMath.min;
+
 public class TwitterService extends TimerTask{
 
     Map<String, Boolean> firstRunMap = new HashMap<>();
@@ -41,6 +43,7 @@ public class TwitterService extends TimerTask{
         ConfigReader configReader = new ConfigReader();
         Map<String, List<Long>> twitterMap = configReader.getTwitterMap();
 
+
         for (Map.Entry<String, List<Long>> entry : twitterMap.entrySet()) {
             String twitterUser = entry.getKey();
             if(!firstRunMap.containsKey(twitterUser)){
@@ -51,19 +54,19 @@ public class TwitterService extends TimerTask{
 
             if (firstRunMap.get(twitterUser) == true){
                 List<Status> tweets = getMainTweetsOnly(twitterUser);
-                for (int i = 0; i < initialTweetCheck; i++){
+                for (int i = 0; i < min(initialTweetCheck, tweets.size()); i++){
                     List<Long> checked = checkedMap.get(twitterUser);
                     checked.add(tweets.get(i).getId());
                     checkedMap.put(twitterUser, checked);
                 }
-                firstRunMap.put(twitterUser, true);
+                firstRunMap.put(twitterUser, false);
             }
 
             Map<String, List<Status>> newTweetsMap = new HashMap<>();
 
 
             List<Status> tweets = getMainTweetsOnly(twitterUser);
-            for (int i = 0; i < tweetCheck; i++){
+            for (int i = 0; i < min(tweetCheck, tweets.size()); i++){
                 Status tweet = tweets.get(i);
                 if(!checkedMap.get(twitterUser).contains(tweet.getId())){
                     if(newTweetsMap.get(twitterUser) != null) {

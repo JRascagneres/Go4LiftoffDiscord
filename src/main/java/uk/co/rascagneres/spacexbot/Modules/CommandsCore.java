@@ -76,9 +76,10 @@ public class CommandsCore extends ListenerAdapter {
         }
 
         if(command[0].equalsIgnoreCase(prefix + "test")) {
+            Utils.checkTwitterExists(command[1]);
             System.out.println(event.getMember().getUser().getId());
-
-            event.getChannel().sendMessage(Utils.PermissionResolver(event.getMember(), event.getChannel()).toString()).queue();
+            event.getChannel().sendMessage(String.valueOf(Utils.checkSubredditExists(command[1]))).queue();
+            //event.getChannel().sendMessage(Utils.PermissionResolver(event.getMember(), event.getChannel()).toString()).queue();
             //event.getChannel().sendMessage(event.getChannel().getGuild().getOwner().toString()).queue()
             //event.getMember().getUser().openPrivateChannel().queue( (channel) -> channel.sendMessage("x").queue() );
 

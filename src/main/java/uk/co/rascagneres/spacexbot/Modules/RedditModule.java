@@ -24,18 +24,25 @@ public class RedditModule extends ListenerAdapter{
             return;
 
         if(command[0].equalsIgnoreCase(prefix + "addReddit")){
+            Long channelID = event.getChannel().getIdLong();
+            String subreddit = command[1];
             if(Utils.PermissionResolver(event.getMember(), event.getChannel()).getValue() >= PermissionLevel.BotManager.getValue())
             {
-                Long channelID = event.getChannel().getIdLong();
-                String subreddit = command[1];
-                ConfigReader configReader = new ConfigReader();
-                configReader.addRedditChannelID(subreddit, channelID);
-                embedBuilder.setAuthor("Channel Added", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-                event.getChannel().sendMessage(embedBuilder.build()).queue();
+                if(Utils.checkSubredditExists(subreddit)) {
+                    ConfigReader configReader = new ConfigReader();
+                    if(configReader.getRedditMap().containsKey(subreddit) && configReader.getRedditMap().get(subreddit).contains(channelID)){
+                        embedBuilder.setAuthor("Already exists!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                    }else {
+                        configReader.addRedditChannelID(subreddit, channelID);
+                        embedBuilder.setAuthor("Channel Added", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                    }
+                }else{
+                    embedBuilder.setAuthor("Subreddit doesn't exist!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                }
             }else{
                 embedBuilder.setAuthor("You are not authorised to run this command", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-                event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
         if(command[0].equalsIgnoreCase(prefix + "removeReddit")){
@@ -44,13 +51,16 @@ public class RedditModule extends ListenerAdapter{
                 Long channelID = event.getChannel().getIdLong();
                 String subreddit = command[1];
                 ConfigReader configReader = new ConfigReader();
-                configReader.removeRedditChannelID(subreddit, channelID);
-                embedBuilder.setAuthor("Channel Removed", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-                event.getChannel().sendMessage(embedBuilder.build()).queue();
+                if (configReader.getRedditMap().containsKey(subreddit) && configReader.getRedditMap().get(subreddit).contains(channelID)) {
+                    configReader.removeRedditChannelID(subreddit, channelID);
+                    embedBuilder.setAuthor("Channel Removed", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                }else{
+                    embedBuilder.setAuthor("No record of this channel!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                }
             }else{
                 embedBuilder.setAuthor("You are not authorised to run this command", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-                event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
 

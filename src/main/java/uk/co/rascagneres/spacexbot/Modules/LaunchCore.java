@@ -55,15 +55,24 @@ public class LaunchCore extends ListenerAdapter{
         }
 
         if(command[0].equalsIgnoreCase(prefix + "listLaunches") || command[0].equalsIgnoreCase(prefix + "ll")){
-            int numberOfLaunches = min(Integer.parseInt(command[1]),10);
-            LaunchLibrary launchLibrary = Utils.getLaunches(numberOfLaunches);
-            embedBuilder.setAuthor("Upcoming Launches", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-            embedBuilder.setColor(new Color(51, 153, 255));
-            for (int i = 0; i < launchLibrary.count; i++){
-                List<String> dateInfo = getDateInfo(launchLibrary.launches.get(i));
-                Launch thisLaunch = launchLibrary.launches.get(i);
-                String[] launchName = thisLaunch.name.split("\\|");
-                embedBuilder.addField("**Name: **" + launchName[0], "\n**Payload: **" + launchName[1]  + "\n**NET: **" + dateInfo.get(0) + "\n" + dateInfo.get(1), false);
+            int amount = 10;
+            try {
+                if (command.length >= 2) {
+                    amount = Integer.parseInt(command[1]);
+                }
+                int numberOfLaunches = min(amount,10);
+                LaunchLibrary launchLibrary = Utils.getLaunches(numberOfLaunches);
+                embedBuilder.setAuthor("Upcoming " + numberOfLaunches + " Launches", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                embedBuilder.setColor(new Color(51, 153, 255));
+                for (int i = 0; i < launchLibrary.count; i++){
+                    List<String> dateInfo = getDateInfo(launchLibrary.launches.get(i));
+                    Launch thisLaunch = launchLibrary.launches.get(i);
+                    String[] launchName = thisLaunch.name.split("\\|");
+                    embedBuilder.addField("**Name: **" + launchName[0], "\n**Payload: **" + launchName[1]  + "\n**NET: **" + dateInfo.get(0) + "\n" + dateInfo.get(1), false);
+                }
+            }catch (Exception ex){
+                embedBuilder.setAuthor("Please only supply a number!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                ex.printStackTrace();
             }
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }

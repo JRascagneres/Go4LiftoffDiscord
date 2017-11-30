@@ -26,14 +26,21 @@ public class TwitterModule extends ListenerAdapter{
             if(Utils.PermissionResolver(event.getMember(), event.getChannel()).getValue() >= PermissionLevel.BotManager.getValue()) {
                 Long channelID = event.getChannel().getIdLong();
                 String twitterUser = command[1];
-                ConfigReader configReader = new ConfigReader();
-                configReader.addTwitter(twitterUser, channelID);
-                embedBuilder.setAuthor("Twitter Added", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-                event.getChannel().sendMessage(embedBuilder.build()).queue();
+                if (Utils.checkTwitterExists(twitterUser)) {
+                    ConfigReader configReader = new ConfigReader();
+                    if (configReader.getTwitterMap().containsKey(twitterUser) && configReader.getTwitterMap().get(twitterUser).contains(channelID)){
+                        embedBuilder.setAuthor("Already exists!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                    }else {
+                        configReader.addTwitter(twitterUser, channelID);
+                        embedBuilder.setAuthor("Twitter Added", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                    }
+                }else{
+                    embedBuilder.setAuthor("Twitter user doesn't exist!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                }
             }else{
                 embedBuilder.setAuthor("You are not authorised to run this command", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-                event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
         if(command[0].equalsIgnoreCase(prefix + "removeTwitter")){
@@ -41,13 +48,16 @@ public class TwitterModule extends ListenerAdapter{
                 Long channelID = event.getChannel().getIdLong();
                 String twitterUser = command[1];
                 ConfigReader configReader = new ConfigReader();
-                configReader.removeTwitter(twitterUser, channelID);
-                embedBuilder.setAuthor("Twitter Removed", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-                event.getChannel().sendMessage(embedBuilder.build()).queue();
+                if (configReader.getTwitterMap().containsKey(twitterUser) && configReader.getTwitterMap().get(twitterUser).contains(channelID)) {
+                    configReader.removeTwitter(twitterUser, channelID);
+                    embedBuilder.setAuthor("Twitter Removed", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                }else{
+                    embedBuilder.setAuthor("No record of this twitter channel!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                }
             }else{
                 embedBuilder.setAuthor("You are not authorised to run this command", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-                event.getChannel().sendMessage(embedBuilder.build()).queue();
             }
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
 

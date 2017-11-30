@@ -12,6 +12,7 @@ import uk.co.rascagneres.spacexbot.Modules.CommandsCore;
 import uk.co.rascagneres.spacexbot.Modules.LaunchCore;
 import uk.co.rascagneres.spacexbot.Modules.RedditModule;
 import uk.co.rascagneres.spacexbot.Modules.TwitterModule;
+import uk.co.rascagneres.spacexbot.Services.CountdownService;
 import uk.co.rascagneres.spacexbot.Services.RedditService;
 import uk.co.rascagneres.spacexbot.Services.TwitterService;
 
@@ -47,6 +48,9 @@ public class Bot extends ListenerAdapter{
 
         Timer twitterTimer = new Timer();
         twitterTimer.schedule(new TwitterService(jda), 0, 10000);
+
+        Timer countdownTimer = new Timer();
+        countdownTimer.schedule(new CountdownService(jda), 0, 10000);
     }
 
     public void onGuildJoinEvent(GuildJoinEvent event){

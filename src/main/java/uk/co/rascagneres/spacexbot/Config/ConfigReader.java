@@ -74,6 +74,18 @@ public class ConfigReader {
         saveJSONFile();
     }
 
+    public List<Long> getCountdownChannels(){
+        return config.countdownChannelIDs;
+    }
+
+    public void addCountdownChannel(Long channelID){
+        config.countdownChannelIDs.add(channelID);
+    }
+
+    public void removeCountdownChannel(Long channelID){
+        config.countdownChannelIDs.remove(channelID);
+    }
+
     public void saveJSONFile(){
         ObjectMapper mapper = new ObjectMapper();
         try {
