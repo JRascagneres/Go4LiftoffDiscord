@@ -27,7 +27,17 @@
 				"command":"listLaunches",
 				"commandAlias":"ll",
 				"parameters":"Number Of Launches To Display (Max 10)",
-				"description":"Returns the information for a number of planned launches from Earth"}]},
+				"description":"Returns the information for a number of planned launches from Earth"},
+				{"name":"Add Countdown Channel",
+				"command":"addCountdownChannel",
+				"commandAlias":"",
+				"parameters":"",
+				"description":"Adds countdown alerts to the channel the command was ran in"},
+				{"name":"Remove Countdown Channel",
+				"command":"removeCountdownChannel",
+				"commandAlias":"",
+				"parameters":"",
+				"description":"Removes countdown alerts to the channel the command was ran in"}]},
 				{"Reddit Commands":
 				[{
 				"name":"Add SubReddit",
