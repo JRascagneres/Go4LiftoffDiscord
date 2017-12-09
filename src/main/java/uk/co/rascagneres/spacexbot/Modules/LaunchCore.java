@@ -5,6 +5,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import uk.co.rascagneres.spacexbot.Config.Config;
 import uk.co.rascagneres.spacexbot.Config.ConfigReader;
+import uk.co.rascagneres.spacexbot.Config.PermissionLevel;
 import uk.co.rascagneres.spacexbot.LaunchData.Launch;
 import uk.co.rascagneres.spacexbot.LaunchData.LaunchLibrary;
 import uk.co.rascagneres.spacexbot.Utilities.Utils;
@@ -33,6 +34,36 @@ public class LaunchCore extends ListenerAdapter{
 
         if(!command[0].startsWith(prefix))
             return;
+
+        if(command[0].equalsIgnoreCase(prefix + "addCountdownChannel")){
+            if(Utils.PermissionResolver(event.getMember(), event.getChannel()).getValue() >= PermissionLevel.BotManager.getValue()) {
+                Long channelID = event.getChannel().getIdLong();
+                if (configReader.getCountdownChannels().contains(channelID)) {
+                    embedBuilder.setAuthor("Already exists!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                } else {
+                    configReader.addCountdownChannel(channelID);
+                    embedBuilder.setAuthor("Channel added!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                }
+            }else{
+                embedBuilder.setAuthor("You are not authorised to run this command", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+            }
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
+        }
+
+        if(command[0].equalsIgnoreCase(prefix + "removeCountdownChannel")){
+            if(Utils.PermissionResolver(event.getMember(), event.getChannel()).getValue() >= PermissionLevel.BotManager.getValue()) {
+                Long channelID = event.getChannel().getIdLong();
+                if(configReader.getCountdownChannels().contains(channelID)){
+                    configReader.removeCountdownChannel(channelID);
+                    embedBuilder.setAuthor("Channel removed!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                }else{
+                    embedBuilder.setAuthor("No record of this channel!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                }
+            }else{
+                embedBuilder.setAuthor("You are not authorised to run this command", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+            }
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
+        }
 
         if(command[0].equalsIgnoreCase(prefix + "nextLaunch") || command[0].equalsIgnoreCase(prefix + "nl")){
             Launch nextLaunch = Utils.getNextLaunch();

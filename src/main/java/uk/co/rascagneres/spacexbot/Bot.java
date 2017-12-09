@@ -50,7 +50,7 @@ public class Bot extends ListenerAdapter{
         twitterTimer.schedule(new TwitterService(jda), 0, 10000);
 
         Timer countdownTimer = new Timer();
-        countdownTimer.schedule(new CountdownService(jda), 0, 10000);
+        countdownTimer.schedule(new CountdownService(jda), 0, 60000);
     }
 
     public void onGuildJoinEvent(GuildJoinEvent event){

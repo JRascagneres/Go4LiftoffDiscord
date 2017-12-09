@@ -80,10 +80,12 @@ public class ConfigReader {
 
     public void addCountdownChannel(Long channelID){
         config.countdownChannelIDs.add(channelID);
+        saveJSONFile();
     }
 
     public void removeCountdownChannel(Long channelID){
         config.countdownChannelIDs.remove(channelID);
+        saveJSONFile();
     }
 
     public void saveJSONFile(){
