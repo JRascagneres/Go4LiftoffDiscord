@@ -8,6 +8,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.requests.RestAction;
 import uk.co.rascagneres.spacexbot.Config.*;
+import uk.co.rascagneres.spacexbot.LaunchData.Launch;
 import uk.co.rascagneres.spacexbot.Services.TwitterService;
 import uk.co.rascagneres.spacexbot.Utilities.Utils;
 
@@ -75,14 +76,13 @@ public class CommandsCore extends ListenerAdapter {
 
         }
 
-        if(command[0].equalsIgnoreCase(prefix + "test")) {
-            Utils.checkTwitterExists(command[1]);
-            System.out.println(event.getMember().getUser().getId());
-            event.getChannel().sendMessage(String.valueOf(Utils.checkSubredditExists(command[1]))).queue();
+        //if(command[0].equalsIgnoreCase(prefix + "test")) {
+        //    Launch launch = Utils.getNextLaunch();
+        //    System.out.println(launch.vidURLs);
             //event.getChannel().sendMessage(Utils.PermissionResolver(event.getMember(), event.getChannel()).toString()).queue();
             //event.getChannel().sendMessage(event.getChannel().getGuild().getOwner().toString()).queue()
             //event.getMember().getUser().openPrivateChannel().queue( (channel) -> channel.sendMessage("x").queue() );
 
-        }
+       // }
     }
 }

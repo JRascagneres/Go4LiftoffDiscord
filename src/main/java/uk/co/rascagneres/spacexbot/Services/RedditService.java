@@ -20,105 +20,106 @@ import static com.google.common.primitives.Ints.min;
 
 public class RedditService extends TimerTask {
 
-    //boolean firstRun = true;
-    Map<String, Boolean> firstRunMap = new HashMap<>();
-
-    //List<String> visited = new LinkedList<String>();
-    Map<String, List<String>> visitedMap = new HashMap<>();
-
     JDA jda;
-    int initialPostCheck = 4;
-    int postCheck = 2;
+
+    Map<String, List<String>> checkedMap = new HashMap<>();
+    Map<String, Boolean> firstRunMap = new HashMap<>();
+    Map<String, List<Submission>> newRedditPosts = new HashMap<>();
 
     public RedditService (JDA jda){
         this.jda = jda;
+        initialise();
 
     }
 
     public void initialise(){
-        ConfigReader configReader = new ConfigReader();
-        Map<String, List<Long>> redditChannelMap = configReader.getRedditMap();
-        for (Map.Entry<String, List<Long>> entry : redditChannelMap.entrySet()) {
-            String subreddit = entry.getKey();
-            firstRunMap.put(subreddit, true);
-            visitedMap.put(subreddit, new LinkedList<>());
-        }
+       ConfigReader configReader = new ConfigReader();
+       Map<String, List<Long>> redditChannelMap = configReader.getRedditMap();
+       for(Map.Entry<String, List<Long>> entry : redditChannelMap.entrySet()){
+            String subredditName = entry.getKey();
+            firstRunMap.put(subredditName, true);
+            checkedMap.put(subredditName, new LinkedList<>());
+       }
     }
 
     public void run(){
         ConfigReader configReader = new ConfigReader();
         Map<String, List<Long>> redditChannelMap = configReader.getRedditMap();
-        for (Map.Entry<String, List<Long>> entry : redditChannelMap.entrySet()) {
-            String subreddit = entry.getKey();
-            if(!firstRunMap.containsKey(subreddit)){
+
+        for (Map.Entry<String, List<Long>> entry : redditChannelMap.entrySet()){
+
+            if(!firstRunMap.containsKey(entry.getKey())){
                 initialise();
             }
 
-            boolean firstRun = firstRunMap.get(subreddit);
+            List<Submission> submissions = new LinkedList<>();
 
-            List<String> visited = visitedMap.get(subreddit);
+            try {
+                submissions = getPosts(entry.getKey(), 5);
+            }catch(Exception e){
+                e.printStackTrace();
+                System.out.println("Get posts failed!");
+            }
 
-            if (firstRun == true) {
-                List<Submission> posts = getPosts(subreddit, initialPostCheck);
-                for (int i = 0; i < initialPostCheck; i++) {
-                    visitedMap.get(subreddit).add(posts.get(i).getId());
+            if (firstRunMap.get(entry.getKey()) == true){
+                for (int i = 0; i < submissions.size(); i++) {
+                    List<String> checkedList = checkedMap.get(entry.getKey());
+                    checkedList.add(submissions.get(i).getId());
+                    checkedMap.put(entry.getKey(), checkedList);
                 }
-                firstRunMap.put(subreddit, false);
+                firstRunMap.put(entry.getKey(), false);
             }
 
-            Map<String, List<Submission>> newPostsMap = new HashMap<>();
-            List<Submission> newPosts = new LinkedList<Submission>();
-            if(newPostsMap.get(subreddit) != null) {
-                newPosts.addAll(newPostsMap.get(subreddit));
-            }
-
-            List<Submission> posts = getPosts(subreddit, postCheck);
-            for (int i = 0; i < postCheck; i++) {
-                Submission submission = posts.get(i);
-
-                if (!visited.contains(submission.getId())) {
-                    newPosts.add(submission);
-
-                    List<Submission> list = new LinkedList<>();
-                    list.addAll(newPosts);
-                    newPostsMap.put(subreddit, list);
-
-                    visited.add(submission.getId());
-
-                    List<String> list2 = new LinkedList<>();
-                    list2.addAll(visited);
-                    visitedMap.put(subreddit, list2);
+            for (int i = 0; i < submissions.size(); i++){
+                Submission post = submissions.get(i);
+                if(!checkedMap.get(entry.getKey()).contains(submissions.get(i).getId())){
+                    if(newRedditPosts.get(entry.getKey()) != null){
+                        newRedditPosts.get(entry.getKey()).add(post);
+                    }else{
+                        List<Submission> list = new LinkedList<>();
+                        list.add(post);
+                        newRedditPosts.put(entry.getKey(), list);
+                    }
+                    checkedMap.get(entry.getKey()).add(post.getId());
                 }
             }
 
-            if (!newPosts.isEmpty()) {
-                for (int i = 0; i < newPosts.size(); i++) {
-                    Submission submission = newPosts.get(i);
+        }
 
-                    List<Long> redditChannelIDs = redditChannelMap.get(subreddit);
-                    for (int j = 0; j < redditChannelIDs.size(); j++) {
-                        Long channelID = redditChannelIDs.get(j);
-                        EmbedBuilder embedBuilder = new EmbedBuilder();
-                        if (submission.isSelfPost()) {
-                            int upperBound = min(submission.getSelftext().length(), 800);
-                            embedBuilder.setTitle("New post in /r/" + submission.getSubredditName() + " by " + submission.getAuthor());
-                            embedBuilder.setDescription("[" + submission.getTitle() + "](" + submission.getShortURL() + ")");
-                            embedBuilder.setColor(new Color(51, 153, 255));
-                            embedBuilder.addField("Post Text: ", submission.getSelftext().substring(0, upperBound), false);
-                            embedBuilder.addField("Reddit Post: ", submission.getShortURL(), false);
-                            embedBuilder.setThumbnail(submission.getThumbnail());
-                        } else {
-                            embedBuilder.setTitle("New post in /r/" + submission.getSubredditName() + " by " + submission.getAuthor());
-                            embedBuilder.setDescription("[" + submission.getTitle() + "](" + submission.getUrl() + ")");
-                            embedBuilder.setColor(new Color(51, 153, 255));
-                            embedBuilder.addField("Reddit Post: ", submission.getShortURL(), false);
-                            embedBuilder.setThumbnail(submission.getThumbnail());
-                        }
-                        jda.getTextChannelById(channelID).sendMessage(embedBuilder.build()).queue();
+        if(!newRedditPosts.isEmpty()){
+            Iterator<Map.Entry<String, List<Submission>>> iterator = newRedditPosts.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String, List<Submission>> submissionSet = iterator.next();
+                String subreddit = submissionSet.getKey();
+                List<Submission> submissionList = submissionSet.getValue();
+                List<Long> channelIDs = redditChannelMap.get(subreddit);
+                for (int i = 0; i < submissionList.size(); i++){
+                    for (int j = 0; j < channelIDs.size(); j++){
+                        sendMessage(submissionList.get(i), channelIDs.get(j));
                     }
                 }
+                iterator.remove();
             }
         }
+    }
+
+    public void sendMessage(Submission submission, Long channelID){
+        System.out.println("SUBMISSION: " + submission.getTitle() + " IN " + submission.getSubredditName() +   " CHANNEL: " + channelID);
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("New post in /r/" + submission.getSubredditName() + " by " + submission.getAuthor());
+        embedBuilder.setColor(new Color(51, 153, 255));
+        embedBuilder.setThumbnail(submission.getThumbnail());
+        if(submission.isSelfPost()){
+            int upperBound = min(submission.getSelftext().length(), 800);
+            embedBuilder.setDescription("[" + submission.getTitle() + "](" + submission.getShortURL() + ")");
+            embedBuilder.addField("Post Text: ", submission.getSelftext().substring(0, upperBound), false);
+            embedBuilder.addField("Reddit Post: ", submission.getShortURL(), false);
+        }else{
+            embedBuilder.setDescription("[" + submission.getTitle() + "](" + submission.getUrl() + ")");
+            embedBuilder.addField("Reddit Post: ", submission.getShortURL(), false);
+        }
+
+        jda.getTextChannelById(channelID).sendMessage(embedBuilder.build()).queue();
     }
 
     public List<Submission> getPosts(String subreddit, int numberOfPosts) {

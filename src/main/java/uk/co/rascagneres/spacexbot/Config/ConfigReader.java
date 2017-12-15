@@ -56,6 +56,9 @@ public class ConfigReader {
 
     public void removeRedditChannelID(String subRedditName, Long channelID){
         config.redditChannelIDs.get(subRedditName).remove(channelID);
+        if (config.redditChannelIDs.get(subRedditName).isEmpty()){
+            config.redditChannelIDs.remove(subRedditName);
+        }
         saveJSONFile();
     }
 
@@ -71,7 +74,11 @@ public class ConfigReader {
 
     public void removeTwitter(String twitterUser, Long channelID){
         config.twitterChannelIDs.get(twitterUser).remove(channelID);
+        if (config.twitterChannelIDs.get(twitterUser).isEmpty()){
+            config.twitterChannelIDs.remove(twitterUser);
+        }
         saveJSONFile();
+
     }
 
     public List<Long> getCountdownChannels(){

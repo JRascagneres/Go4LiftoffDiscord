@@ -33,8 +33,8 @@ public class Bot extends ListenerAdapter{
             ConfigReader configReader = new ConfigReader();
             jda = new JDABuilder(AccountType.BOT).setToken(configReader.getToken()).buildBlocking();
             jda.getPresence().setGame(Game.of("Monitoring Chat"));
-            jda.addEventListener(new CommandsCore());
             jda.addEventListener(new Bot());
+            jda.addEventListener(new CommandsCore());
             jda.addEventListener(new LaunchCore());
             jda.addEventListener(new RedditModule());
             jda.addEventListener(new TwitterModule());
@@ -47,7 +47,7 @@ public class Bot extends ListenerAdapter{
         redditTimer.schedule(new RedditService(jda), 0, 10000);
 
         Timer twitterTimer = new Timer();
-        twitterTimer.schedule(new TwitterService(jda), 0, 10000);
+        twitterTimer.schedule(new TwitterService(jda), 0, 30000);
 
         Timer countdownTimer = new Timer();
         countdownTimer.schedule(new CountdownService(jda), 0, 60000);

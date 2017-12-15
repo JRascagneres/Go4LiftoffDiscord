@@ -53,12 +53,12 @@
 				{"Twitter Commands":
 				[{
 				"name":"Add Twitter",
-				"command":"addReddit",
+				"command":"addTwitter",
 				"commandAlias":"",
 				"parameters":"Twitter to add",
 				"description":"Adds the given twitter user read outs to the channel the command was ran in"},
 				{"name":"Remove Twitter",
-				"command":"removeReddit",
+				"command":"removeTwitter",
 				"commandAlias":"",
 				"parameters":"Twitter to remove",
 				"description":"Removes the given twitter user read outs to the channel the command was ran in"}]}]}

@@ -25,7 +25,7 @@ public class RedditModule extends ListenerAdapter{
 
         if(command[0].equalsIgnoreCase(prefix + "addReddit")){
             Long channelID = event.getChannel().getIdLong();
-            String subreddit = command[1];
+            String subreddit = command[1].toLowerCase();
             if(Utils.PermissionResolver(event.getMember(), event.getChannel()).getValue() >= PermissionLevel.BotManager.getValue())
             {
                 if(Utils.checkSubredditExists(subreddit)) {
@@ -49,7 +49,7 @@ public class RedditModule extends ListenerAdapter{
             if(Utils.PermissionResolver(event.getMember(), event.getChannel()).getValue() >= PermissionLevel.BotManager.getValue())
             {
                 Long channelID = event.getChannel().getIdLong();
-                String subreddit = command[1];
+                String subreddit = command[1].toLowerCase();
                 ConfigReader configReader = new ConfigReader();
                 if (configReader.getRedditMap().containsKey(subreddit) && configReader.getRedditMap().get(subreddit).contains(channelID)) {
                     configReader.removeRedditChannelID(subreddit, channelID);

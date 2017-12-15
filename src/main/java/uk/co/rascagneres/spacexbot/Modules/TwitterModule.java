@@ -25,7 +25,7 @@ public class TwitterModule extends ListenerAdapter{
         if(command[0].equalsIgnoreCase(prefix + "addTwitter")){
             if(Utils.PermissionResolver(event.getMember(), event.getChannel()).getValue() >= PermissionLevel.BotManager.getValue()) {
                 Long channelID = event.getChannel().getIdLong();
-                String twitterUser = command[1];
+                String twitterUser = command[1].toLowerCase();
                 if (Utils.checkTwitterExists(twitterUser)) {
                     ConfigReader configReader = new ConfigReader();
                     if (configReader.getTwitterMap().containsKey(twitterUser) && configReader.getTwitterMap().get(twitterUser).contains(channelID)){
@@ -46,7 +46,7 @@ public class TwitterModule extends ListenerAdapter{
         if(command[0].equalsIgnoreCase(prefix + "removeTwitter")){
             if(Utils.PermissionResolver(event.getMember(), event.getChannel()).getValue() >= PermissionLevel.BotManager.getValue()) {
                 Long channelID = event.getChannel().getIdLong();
-                String twitterUser = command[1];
+                String twitterUser = command[1].toLowerCase();
                 ConfigReader configReader = new ConfigReader();
                 if (configReader.getTwitterMap().containsKey(twitterUser) && configReader.getTwitterMap().get(twitterUser).contains(channelID)) {
                     configReader.removeTwitter(twitterUser, channelID);

@@ -24,8 +24,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 import static javafx.scene.input.KeyCode.L;
 
@@ -128,5 +132,29 @@ public class Utils {
         }
 
         return userExists;
+    }
+
+    public static List<String> getTimeToLaunchData(Launch thisLaunch){
+        Date date = new Date();
+        Instant now = ZonedDateTime.now(ZoneOffset.UTC).toInstant();
+        try{
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMMM dd, yyyy HH:mm:ss");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            date = simpleDateFormat.parse(thisLaunch.net);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        Duration timeToLaunch = Duration.between(now, date.toInstant());
+        Long days = timeToLaunch.toDays();
+        Long hours = timeToLaunch.toHours() - days * 24;
+        Long minutes = timeToLaunch.toMinutes() - days * 24 * 60 - hours * 60;
+
+        List<String> timeToLaunchList = new LinkedList<>();
+        timeToLaunchList.add(String.valueOf(days));
+        timeToLaunchList.add(String.valueOf(hours));
+        timeToLaunchList.add(String.valueOf(minutes));
+        timeToLaunchList.add(date.toString());
+
+        return timeToLaunchList;
     }
 }

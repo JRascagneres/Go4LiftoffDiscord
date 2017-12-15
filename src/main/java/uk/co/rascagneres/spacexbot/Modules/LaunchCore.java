@@ -14,9 +14,10 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 
 import static java.lang.StrictMath.min;
@@ -78,7 +79,18 @@ public class LaunchCore extends ListenerAdapter{
                 embedBuilder.appendDescription("**Name: **" + launchName[0]  + "\n");
                 embedBuilder.appendDescription("**Payload: **" + launchName[1]  + "\n");
                 embedBuilder.appendDescription("**NET: **" + newNET + "\n");
-                embedBuilder.appendDescription(launchInText);
+                embedBuilder.appendDescription(launchInText + "\n");
+                String vidURLText = "";
+                for(int i = 0; i < nextLaunch.vidURLs.size(); i++) {
+                    String url = nextLaunch.vidURLs.get(i);
+                    if (!vidURLText.isEmpty()){
+                        vidURLText += "\n" + url;
+                    }else{
+                        vidURLText += url;
+                    }
+                }
+                embedBuilder.appendDescription("**Watch Live: **\n" + vidURLText + "\n");
+                embedBuilder.appendDescription("**Rocket Watch: **\nhttp://rocketwatch.yasiu.pl/?id=" + nextLaunch.id);
             }else{
                 embedBuilder.appendDescription("**ERROR, Report to developer**");
             }
@@ -111,18 +123,22 @@ public class LaunchCore extends ListenerAdapter{
     }
 
     public List<String> getDateInfo(Launch thisLaunch){
-        Date date = new Date();
-        Instant now = Instant.now();
+        List<String> timeToLaunchList = Utils.getTimeToLaunchData(thisLaunch);
+        String days = timeToLaunchList.get(0);
+        String hours = timeToLaunchList.get(1);
+        String minutes = timeToLaunchList.get(2);
+        String tempDate = timeToLaunchList.get(3);
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss Z yyyy", new Locale("us"));
+        Date date;
         try {
-            date = new SimpleDateFormat("MMMM dd, yyyy HH:mm:ss").parse(thisLaunch.net);
+            date = sdf.parse(tempDate);
         }catch (Exception e){
             e.printStackTrace();
+            return null;
         }
-        String newNET = new SimpleDateFormat("dd MMMM HH:mm:ss").format(date);
-        Duration timeToLaunch = Duration.between(now, date.toInstant());
-        String days = String.valueOf(timeToLaunch.toHours() / 24);
-        String hours = String.valueOf(timeToLaunch.toHours() - (Long.parseLong(days) * 24));
-        String minutes = String.valueOf(timeToLaunch.toMinutes() - (Long.parseLong(hours) * 60) - (Long.parseLong(days) * 24 * 60));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String newNET = simpleDateFormat.format(date);
         List<String> dateInfo = new LinkedList<String>();
         dateInfo.add(newNET);
         dateInfo.add("**Launch In: **" + days + " Days " + hours + " hours " + minutes + " minutes");

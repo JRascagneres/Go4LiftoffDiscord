@@ -12,8 +12,11 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.TimerTask;
 
 public class CountdownService extends TimerTask {
@@ -28,22 +31,14 @@ public class CountdownService extends TimerTask {
         ConfigReader configReader = new ConfigReader();
         List<Long> countdownChannelIDs = configReader.getCountdownChannels();
         LaunchLibrary launches = Utils.getLaunches(10);
-        Date date = new Date();
-        Instant now = Instant.now();
 
         for (int i = 0; i < launches.launches.size(); i++){
             Launch thisLaunch = launches.launches.get(i);
-            try{
-                date = new SimpleDateFormat("MMMM dd, yyyy HH:mm:ss").parse(thisLaunch.net);
-            }catch (Exception e){
-                e.printStackTrace();
-            }
 
-            //String newNET = new SimpleDateFormat("dd MMMM HH:mm:ss").format(date);
-            Duration timeToLaunch = Duration.between(now, date.toInstant());
-            Long days = timeToLaunch.toDays();
-            Long hours = timeToLaunch.toHours() - days * 24;
-            Long minutes = timeToLaunch.toMinutes() - days * 24 * 60 - hours * 60;
+            List<String> timeToLaunchList = Utils.getTimeToLaunchData(thisLaunch);
+            Long days = Long.parseLong(timeToLaunchList.get(0));
+            Long hours = Long.parseLong(timeToLaunchList.get(1));
+            Long minutes = Long.parseLong(timeToLaunchList.get(2));
 
             if(days == 1 && hours == 0 && minutes == 0){
                 sendMessage(thisLaunch, countdownChannelIDs, "24 Hours");
@@ -83,7 +78,19 @@ public class CountdownService extends TimerTask {
             embedBuilder.setThumbnail(thisLaunch.rocket.imageURL);
             embedBuilder.setColor(new Color(51, 153, 255));
             embedBuilder.appendDescription("**Name: **" + launchName[0]  + "\n");
-            embedBuilder.appendDescription("**NET in " + text + "**");
+            embedBuilder.appendDescription("**NET in " + text + "**\n");
+            if(text == "15 Minutes" || text == "1 Minute!"){
+                String vidURLText = "";
+                for(int j = 0; j < thisLaunch.vidURLs.size(); j++) {
+                    String url = thisLaunch.vidURLs.get(j);
+                    if (!vidURLText.isEmpty()){
+                        vidURLText += "\n" + url;
+                    }else{
+                        vidURLText += url;
+                    }
+                }
+                embedBuilder.appendDescription("**Watch Live: **\n" + vidURLText + "\n");
+            }
 
             jda.getTextChannelById(channelIDs.get(i)).sendMessage(embedBuilder.build()).queue();
         }
