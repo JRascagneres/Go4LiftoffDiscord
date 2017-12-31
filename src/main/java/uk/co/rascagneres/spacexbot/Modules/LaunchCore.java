@@ -68,31 +68,44 @@ public class LaunchCore extends ListenerAdapter{
 
         if(command[0].equalsIgnoreCase(prefix + "nextLaunch") || command[0].equalsIgnoreCase(prefix + "nl")){
             Launch nextLaunch = Utils.getNextLaunch();
-            String[] launchName = nextLaunch.name.split("\\|");
-            List<String> dateInfo = getDateInfo(nextLaunch);
-            String newNET = dateInfo.get(0);
-            String launchInText = dateInfo.get(1);
-            embedBuilder.setAuthor("Next Launch", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-            embedBuilder.setThumbnail(nextLaunch.rocket.imageURL);
-            embedBuilder.setColor(new Color(51, 153, 255));
-            if (nextLaunch instanceof Launch){
-                embedBuilder.appendDescription("**Name: **" + launchName[0]  + "\n");
-                embedBuilder.appendDescription("**Payload: **" + launchName[1]  + "\n");
-                embedBuilder.appendDescription("**NET: **" + newNET + "\n");
-                embedBuilder.appendDescription(launchInText + "\n");
-                String vidURLText = "";
-                for(int i = 0; i < nextLaunch.vidURLs.size(); i++) {
-                    String url = nextLaunch.vidURLs.get(i);
-                    if (!vidURLText.isEmpty()){
-                        vidURLText += "\n" + url;
-                    }else{
-                        vidURLText += url;
+            if(nextLaunch != null) {
+                String[] launchName = nextLaunch.name.split("\\|");
+                List<String> dateInfo = getDateInfo(nextLaunch);
+                String newNET = dateInfo.get(0);
+                String launchInText = dateInfo.get(1);
+                embedBuilder.setAuthor("Next Launch", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                embedBuilder.setThumbnail(nextLaunch.rocket.imageURL);
+                embedBuilder.setColor(new Color(51, 153, 255));
+                if (nextLaunch instanceof Launch) {
+                    embedBuilder.appendDescription("**Name: **" + launchName[0] + "\n");
+                    embedBuilder.appendDescription("**Launch Status: " + nextLaunch.statusText + "**\n");
+                    embedBuilder.appendDescription("**Payload: **" + launchName[1] + "\n");
+
+                    if (nextLaunch.tbdtime == 1 || nextLaunch.tbddate == 1) {
+                        embedBuilder.appendDescription("**NET: **" + newNET + "  **TBD**" + "\n");
+                    } else {
+                        embedBuilder.appendDescription("**NET: **" + newNET + "\n");
                     }
+
+                    embedBuilder.appendDescription(launchInText + "\n");
+                    String vidURLText = "";
+                    for (int i = 0; i < nextLaunch.vidURLs.size(); i++) {
+                        String url = nextLaunch.vidURLs.get(i);
+                        if (!vidURLText.isEmpty()) {
+                            vidURLText += "\n" + url;
+                        } else {
+                            vidURLText += url;
+                        }
+                    }
+                    if (vidURLText != "") {
+                        embedBuilder.appendDescription("**Watch Live: **\n" + vidURLText + "\n");
+                    }
+                    embedBuilder.appendDescription("**Rocket Watch: **\nhttp://rocketwatch.yasiu.pl/?id=" + nextLaunch.id);
+                } else {
+                    embedBuilder.appendDescription("**ERROR, Report to developer**");
                 }
-                embedBuilder.appendDescription("**Watch Live: **\n" + vidURLText + "\n");
-                embedBuilder.appendDescription("**Rocket Watch: **\nhttp://rocketwatch.yasiu.pl/?id=" + nextLaunch.id);
             }else{
-                embedBuilder.appendDescription("**ERROR, Report to developer**");
+                embedBuilder.setAuthor("Error Loading Launches, Please Try Again");
             }
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
@@ -105,13 +118,22 @@ public class LaunchCore extends ListenerAdapter{
                 }
                 int numberOfLaunches = min(amount,10);
                 LaunchLibrary launchLibrary = Utils.getLaunches(numberOfLaunches);
-                embedBuilder.setAuthor("Upcoming " + numberOfLaunches + " Launches", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
-                embedBuilder.setColor(new Color(51, 153, 255));
-                for (int i = 0; i < launchLibrary.count; i++){
-                    List<String> dateInfo = getDateInfo(launchLibrary.launches.get(i));
-                    Launch thisLaunch = launchLibrary.launches.get(i);
-                    String[] launchName = thisLaunch.name.split("\\|");
-                    embedBuilder.addField("**Name: **" + launchName[0], "\n**Payload: **" + launchName[1]  + "\n**NET: **" + dateInfo.get(0) + "\n" + dateInfo.get(1), false);
+                if(launchLibrary != null) {
+                    embedBuilder.setAuthor("Upcoming " + numberOfLaunches + " Launches", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+                    embedBuilder.setColor(new Color(51, 153, 255));
+                    for (int i = 0; i < launchLibrary.count; i++) {
+                        List<String> dateInfo = getDateInfo(launchLibrary.launches.get(i));
+                        Launch thisLaunch = launchLibrary.launches.get(i);
+                        String[] launchName = thisLaunch.name.split("\\|");
+
+                        String TBD = "";
+                        if (thisLaunch.tbdtime == 1 || thisLaunch.tbddate == 1) {
+                            TBD = " **TBD**";
+                        }
+                        embedBuilder.addField("**Name: **" + launchName[0], "\n**Launch Status: " + thisLaunch.statusText + "**\n**Payload: **" + launchName[1] + "\n**NET: **" + dateInfo.get(0) + TBD + "\n" + dateInfo.get(1), false);
+                    }
+                }else{
+                    embedBuilder.setAuthor("Error Loading Launches, Please Try Again");
                 }
             }catch (Exception ex){
                 embedBuilder.setAuthor("Please only supply a number!", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");

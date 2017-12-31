@@ -31,41 +31,44 @@ public class CountdownService extends TimerTask {
         ConfigReader configReader = new ConfigReader();
         List<Long> countdownChannelIDs = configReader.getCountdownChannels();
         LaunchLibrary launches = Utils.getLaunches(10);
+        if (launches != null) {
+            for (int i = 0; i < launches.launches.size(); i++) {
+                Launch thisLaunch = launches.launches.get(i);
 
-        for (int i = 0; i < launches.launches.size(); i++){
-            Launch thisLaunch = launches.launches.get(i);
+                if (thisLaunch.status == 1 && (thisLaunch.tbddate == 0 && thisLaunch.tbdtime == 0)) {
+                    List<String> timeToLaunchList = Utils.getTimeToLaunchData(thisLaunch);
+                    Long days = Long.parseLong(timeToLaunchList.get(0));
+                    Long hours = Long.parseLong(timeToLaunchList.get(1));
+                    Long minutes = Long.parseLong(timeToLaunchList.get(2));
 
-            List<String> timeToLaunchList = Utils.getTimeToLaunchData(thisLaunch);
-            Long days = Long.parseLong(timeToLaunchList.get(0));
-            Long hours = Long.parseLong(timeToLaunchList.get(1));
-            Long minutes = Long.parseLong(timeToLaunchList.get(2));
-
-            if(days == 1 && hours == 0 && minutes == 0){
-                sendMessage(thisLaunch, countdownChannelIDs, "24 Hours");
-            }else if (days == 0){
-                if (minutes == 0){
-                    if(hours == 12){
-                        sendMessage(thisLaunch, countdownChannelIDs, "12 Hours");
-                    }else if(hours == 6){
-                        sendMessage(thisLaunch, countdownChannelIDs, "6 Hours");
-                    }else if(hours == 1){
-                        sendMessage(thisLaunch, countdownChannelIDs, "1 Hour");
-                    }
-                }else{
-                    if (hours == 0){
-                        if (minutes == 30){
-                            sendMessage(thisLaunch, countdownChannelIDs, "30 Minutes");
-                        }else if(minutes == 15){
-                            sendMessage(thisLaunch, countdownChannelIDs, "15 Minutes");
-                        }else if(minutes == 1){
-                            sendMessage(thisLaunch, countdownChannelIDs, "1 Minute!");
-                        }else if(minutes == 0){
-                            sendMessage(thisLaunch, countdownChannelIDs, "NOW!");
+                    if (days == 1 && hours == 0 && minutes == 0) {
+                        sendMessage(thisLaunch, countdownChannelIDs, "24 Hours");
+                    } else if (days == 0) {
+                        if (minutes == 0) {
+                            if (hours == 12) {
+                                sendMessage(thisLaunch, countdownChannelIDs, "12 Hours");
+                            } else if (hours == 6) {
+                                sendMessage(thisLaunch, countdownChannelIDs, "6 Hours");
+                            } else if (hours == 1) {
+                                sendMessage(thisLaunch, countdownChannelIDs, "1 Hour");
+                            }
+                        } else {
+                            if (hours == 0) {
+                                if (minutes == 30) {
+                                    sendMessage(thisLaunch, countdownChannelIDs, "30 Minutes");
+                                } else if (minutes == 15) {
+                                    sendMessage(thisLaunch, countdownChannelIDs, "15 Minutes");
+                                } else if (minutes == 1) {
+                                    sendMessage(thisLaunch, countdownChannelIDs, "1 Minute!");
+                                } else if (minutes == 0) {
+                                    sendMessage(thisLaunch, countdownChannelIDs, "NOW!");
+                                }
+                            }
                         }
                     }
                 }
-            }
 
+            }
         }
     }
 
@@ -78,7 +81,7 @@ public class CountdownService extends TimerTask {
             embedBuilder.setThumbnail(thisLaunch.rocket.imageURL);
             embedBuilder.setColor(new Color(51, 153, 255));
             embedBuilder.appendDescription("**Name: **" + launchName[0]  + "\n");
-            embedBuilder.appendDescription("**NET in " + text + "**\n");
+            embedBuilder.appendDescription("**NET in " + text + "**\n\n");
             if(text == "15 Minutes" || text == "1 Minute!"){
                 String vidURLText = "";
                 for(int j = 0; j < thisLaunch.vidURLs.size(); j++) {
@@ -89,7 +92,9 @@ public class CountdownService extends TimerTask {
                         vidURLText += url;
                     }
                 }
-                embedBuilder.appendDescription("**Watch Live: **\n" + vidURLText + "\n");
+                if (thisLaunch.vidURLs.size() > 0) {
+                    embedBuilder.appendDescription("**Watch Live: **\n" + vidURLText + "\n");
+                }
             }
 
             jda.getTextChannelById(channelIDs.get(i)).sendMessage(embedBuilder.build()).queue();

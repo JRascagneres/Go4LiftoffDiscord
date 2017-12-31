@@ -52,15 +52,44 @@ public class Utils {
     public static LaunchLibrary getLaunches(int amount) {
         try {
             LaunchLibrary launchLibrary = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue(getText("https://launchlibrary.net/1.3/launch/next/" + amount), LaunchLibrary.class);
+            for(int i = 0; i < launchLibrary.launches.size(); i++){
+                String status = "";
+                switch (launchLibrary.launches.get(i).status){
+                    case 1:
+                        status = "Green";
+                        break;
+                    case 2:
+                        status = "Red";
+                        break;
+                    case 3:
+                        status = "Success";
+                        break;
+                    case 4:
+                        status = "Failed";
+                        break;
+                }
+                launchLibrary.launches.get(i).statusText = status;
+            }
             return launchLibrary;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("ERROR GETTING LAUNCHES");
             return null;
         }
     }
 
     public static Launch getNextLaunch(){
-        return getLaunches(1).launches.get(0);
+        try {
+            int launches = 1;
+            Launch currentLaunch = getLaunches(launches).launches.get(launches - 1);
+            while (currentLaunch.status != 1) {
+                launches++;
+                currentLaunch = getLaunches(launches).launches.get(launches - 1);
+            }
+            return currentLaunch;
+        }catch (Exception e){
+            System.out.println("ERROR GETTING LAUNCHES");
+            return null;
+        }
     }
 
     public static PermissionLevel PermissionResolver(Member member, Channel channel){

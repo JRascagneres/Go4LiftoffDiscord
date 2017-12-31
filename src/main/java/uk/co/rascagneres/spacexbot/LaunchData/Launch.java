@@ -13,5 +13,7 @@ public class Launch {
     public int tbdtime;
     public int tbddate;
     public List<String> vidURLs;
+    public int status;
+    public String statusText;
 
 }
