@@ -15,5 +15,7 @@ public class Launch {
     public List<String> vidURLs;
     public int status;
     public String statusText;
+    public Location location;
+    public String padName;
 
 }

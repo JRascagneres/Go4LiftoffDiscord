@@ -69,6 +69,7 @@ public class Utils {
                         break;
                 }
                 launchLibrary.launches.get(i).statusText = status;
+                launchLibrary.launches.get(i).padName = launchLibrary.launches.get(0).location.pads.get(0).name;
             }
             return launchLibrary;
         } catch (Exception e) {

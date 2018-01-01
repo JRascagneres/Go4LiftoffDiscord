@@ -80,7 +80,7 @@ public class LaunchCore extends ListenerAdapter{
                     embedBuilder.appendDescription("**Name: **" + launchName[0] + "\n");
                     embedBuilder.appendDescription("**Launch Status: " + nextLaunch.statusText + "**\n");
                     embedBuilder.appendDescription("**Payload: **" + launchName[1] + "\n");
-
+                    embedBuilder.appendDescription("**Launch Pad: **" + nextLaunch.padName + "\n");
                     if (nextLaunch.tbdtime == 1 || nextLaunch.tbddate == 1) {
                         embedBuilder.appendDescription("**NET: **" + newNET + "  **TBD**" + "\n");
                     } else {
@@ -130,7 +130,7 @@ public class LaunchCore extends ListenerAdapter{
                         if (thisLaunch.tbdtime == 1 || thisLaunch.tbddate == 1) {
                             TBD = " **TBD**";
                         }
-                        embedBuilder.addField("**Name: **" + launchName[0], "\n**Launch Status: " + thisLaunch.statusText + "**\n**Payload: **" + launchName[1] + "\n**NET: **" + dateInfo.get(0) + TBD + "\n" + dateInfo.get(1), false);
+                        embedBuilder.addField("**Name: **" + launchName[0], "\n**Launch Status: " + thisLaunch.statusText + "**\n**Payload: **" + launchName[1] + "\n**Launch Pad: **" + thisLaunch.padName + "\n**NET: **" + dateInfo.get(0) + TBD + "\n" + dateInfo.get(1), false);
                     }
                 }else{
                     embedBuilder.setAuthor("Error Loading Launches, Please Try Again");
