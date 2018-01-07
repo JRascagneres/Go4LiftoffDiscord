@@ -3,10 +3,12 @@ package uk.co.rascagneres.spacexbot.Modules;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import uk.co.rascagneres.spacexbot.Config.Config;
 import uk.co.rascagneres.spacexbot.Config.ConfigReader;
 import uk.co.rascagneres.spacexbot.Config.PermissionLevel;
 import uk.co.rascagneres.spacexbot.Utilities.Utils;
+
+import java.util.List;
+import java.util.Map;
 
 public class TwitterModule extends ListenerAdapter{
     ConfigReader configReader = new ConfigReader();
@@ -60,6 +62,28 @@ public class TwitterModule extends ListenerAdapter{
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
 
+        if(command[0].equalsIgnoreCase(prefix + "getFollowedTwitter")){
+            Long channelID = event.getChannel().getIdLong();
+            configReader = new ConfigReader();
+            Map<String, List<Long>> twitterMap = configReader.getTwitterMap();
+            Boolean empty = true;
+            embedBuilder.setAuthor("Followed Twitter Accounts", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+            for(Map.Entry<String, List<Long>> entry : twitterMap.entrySet()){
+                String twitterUser = entry.getKey();
+                List<Long> channelIDs = entry.getValue();
+                if(channelIDs.contains(channelID)){
+                    String twitterName = Utils.getTwitterName(twitterUser);
+                    embedBuilder.addField(twitterName, "@" + twitterUser, false);
+                    empty = false;
+                }
+            }
+
+            if(empty){
+                embedBuilder.appendDescription("No twitter accounts followed in this channel");
+            }
+
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
+        }
 
     }
 }

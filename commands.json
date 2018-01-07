@@ -49,7 +49,12 @@
 				"command":"removeReddit",
 				"commandAlias":"",
 				"parameters":"SubReddit to remove",
-				"description":"Removes the given subreddit read outs to the channel the command was ran in"}]},
+				"description":"Removes the given subreddit read outs to the channel the command was ran in"},
+				{"name":"Get Followed Reddit",
+				"command":"getFollowedReddit",
+				"commandAlias":"",
+				"parameters":"",
+				"description":"Outputs all subreddits being followed in the channel the command was ran in"}]},
 				{"Twitter Commands":
 				[{
 				"name":"Add Twitter",
@@ -61,4 +66,9 @@
 				"command":"removeTwitter",
 				"commandAlias":"",
 				"parameters":"Twitter to remove",
-				"description":"Removes the given twitter user read outs to the channel the command was ran in"}]}]}
+				"description":"Removes the given twitter user read outs to the channel the command was ran in"},
+				{"name":"Get Followed Twitter",
+				"command":"getFollowedTwitter",
+				"commandAlias":"",
+				"parameters":"",
+				"description":"Outputs all twitter accounts being followed in the channel the command was ran in"}]}]}

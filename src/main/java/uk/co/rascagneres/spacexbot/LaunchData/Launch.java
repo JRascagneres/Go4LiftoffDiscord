@@ -1,8 +1,5 @@
 package uk.co.rascagneres.spacexbot.LaunchData;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.List;
 
 public class Launch {

@@ -21,7 +21,7 @@ public class TwitterService extends TimerTask{
     Map<String, List<Long>> checkedMap = new HashMap<>();
 
     JDA jda;
-    int initialTweetCheck = 4;
+    int initialTweetCheck = 8;
     int tweetCheck = 2;
 
     public TwitterService (JDA jda){
@@ -82,7 +82,7 @@ public class TwitterService extends TimerTask{
                 }
             }
 
-            if (newTweetsMap.get(twitterUser) != null && !newTweetsMap.get(twitterUser).isEmpty()){
+            if (newTweetsMap.get(twitterUser) != null && !newTweetsMap.get(twitterUser).isEmpty() && !checkedMap.isEmpty()){
                 for (int i = 0; i < newTweetsMap.get(twitterUser).size(); i++){
                     Status tweet = newTweetsMap.get(twitterUser).get(i);
                     for(int j = 0; j < channelIDs.size(); j++){
@@ -96,6 +96,7 @@ public class TwitterService extends TimerTask{
                         embedBuilder.setThumbnail(tweet.getUser().getProfileImageURL());
                         embedBuilder.setColor(new Color(51, 153, 255));
 
+                        System.out.println("NEW TWEET: by " + tweet.getUser().getScreenName() + " CHANNEL: " + channelID);
                         jda.getTextChannelById(channelID).sendMessage(embedBuilder.build()).queue();
                     }
                 }
@@ -133,7 +134,8 @@ public class TwitterService extends TimerTask{
         try {
             statusList = twitter.getUserTimeline(user);
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println("Failed to get tweet");
         }
         return statusList;
     }

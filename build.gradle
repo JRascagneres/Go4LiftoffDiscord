@@ -8,7 +8,7 @@ mainClassName = 'uk.co.rascagneres.spacexbot.Bot'
 
 version '1.0'
 def jdaVersion = '3.3.1_303'
-def jrawVersion = '0.9.0'
+def jrawVersion = '1.0.0'
 
 sourceCompatibility = 1.8
 
@@ -20,9 +20,10 @@ dependencies {
     compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.10.0'
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
     compile "net.dv8tion:JDA:$jdaVersion"
-    compile "net.dean.jraw:JRAW:$jrawVersion"
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1'
     compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.6'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+    compile "net.dean.jraw:JRAW:$jrawVersion"
 }
 
 compileJava.options.encoding = 'UTF-8'

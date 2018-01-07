@@ -76,13 +76,10 @@ public class CommandsCore extends ListenerAdapter {
 
         }
 
-        //if(command[0].equalsIgnoreCase(prefix + "test")) {
-        //    Launch launch = Utils.getNextLaunch();
-        //    System.out.println(launch.vidURLs);
-            //event.getChannel().sendMessage(Utils.PermissionResolver(event.getMember(), event.getChannel()).toString()).queue();
-            //event.getChannel().sendMessage(event.getChannel().getGuild().getOwner().toString()).queue()
-            //event.getMember().getUser().openPrivateChannel().queue( (channel) -> channel.sendMessage("x").queue() );
-
-       // }
+        if(command[0].equalsIgnoreCase(prefix + "test")) {
+            //System.out.println(Utils.getRedditPosts("spacex", 1).get(0).getTitle());
+            //System.out.println(Utils.getRedditTitle("spacex"));
+            Utils.getRedditTitle("spacex");
+        }
     }
 }

@@ -2,16 +2,20 @@ package uk.co.rascagneres.spacexbot.Utilities;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.scene.SubScene;
 import net.dean.jraw.RedditClient;
+import net.dean.jraw.http.NetworkAdapter;
+import net.dean.jraw.http.OkHttpNetworkAdapter;
 import net.dean.jraw.http.UserAgent;
-import net.dean.jraw.http.oauth.Credentials;
-import net.dean.jraw.http.oauth.OAuthData;
-import net.dean.jraw.models.WikiPageSettings;
+import net.dean.jraw.models.Submission;
+import net.dean.jraw.models.SubredditSort;
+import net.dean.jraw.oauth.Credentials;
+import net.dean.jraw.oauth.OAuthHelper;
+import net.dean.jraw.pagination.DefaultPaginator;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.User;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.conf.ConfigurationBuilder;
@@ -120,28 +124,38 @@ public class Utils {
     }
 
     public static boolean checkSubredditExists(String subreddit){
-        UserAgent userAgent = UserAgent.of("desktop", "uk.co.rascagneres.spacexbot", "v1.0", "Scorp1579");
-        RedditClient redditClient = new RedditClient(userAgent);
-        Map<String, String> redditData = new ConfigReader().getRedditData();
-        Credentials credentials = Credentials.script(redditData.get("username"), redditData.get("password"), redditData.get("clientid"), redditData.get("clientsecret"));
-        OAuthData authData = null;
+        RedditClient redditClient = getRedditClient();
         try {
-            authData = redditClient.getOAuthHelper().easyAuth(credentials);
-
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        redditClient.authenticate(authData);
-
-        try {
-            redditClient.getSubreddit(subreddit);
+            redditClient.subreddit(subreddit);
         }catch (Exception ex){
             return false;
         }
         return true;
     }
 
-    public static boolean checkTwitterExists(String twitterUser){
+    public static RedditClient getRedditClient(){
+        UserAgent userAgent = new UserAgent("desktop", "uk.co.rascagneres.spacexbot", "v1.0", "Scorp1579");
+        NetworkAdapter adapter = new OkHttpNetworkAdapter(userAgent);
+        Map<String, String> redditData = new ConfigReader().getRedditData();
+        Credentials credentials = Credentials.script(redditData.get("username"), redditData.get("password"), redditData.get("clientid"), redditData.get("clientsecret"));
+        RedditClient redditClient = OAuthHelper.automatic(adapter, credentials);
+        redditClient.setLogHttp(false);
+        return redditClient;
+    }
+
+    public static List<Submission> getRedditPosts(String subreddit, int numberOfPosts){
+        DefaultPaginator<Submission> paginator = getRedditClient().subreddit(subreddit).posts()
+                .limit(numberOfPosts)
+                .sorting(SubredditSort.NEW)
+                .build();
+        return paginator.next();
+    }
+
+    public static String getRedditTitle(String subreddit){
+        return getRedditClient().subreddit(subreddit).about().getTitle();
+    }
+
+    public static Twitter getTwitter(){
         ConfigReader configReader = new ConfigReader();
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
         configurationBuilder
@@ -154,6 +168,11 @@ public class Utils {
 
         TwitterFactory twitterFactory = new TwitterFactory(configurationBuilder.build());
         Twitter twitter = twitterFactory.getInstance();
+        return twitter;
+    }
+
+    public static boolean checkTwitterExists(String twitterUser){
+        Twitter twitter = getTwitter();
         boolean userExists = true;
         try {
             twitter.showUser(twitterUser);
@@ -162,6 +181,15 @@ public class Utils {
         }
 
         return userExists;
+    }
+
+    public static String getTwitterName(String twitterUser){
+        Twitter twitter = getTwitter();
+        try {
+            return twitter.users().showUser(twitterUser).getName();
+        }catch (Exception e){
+            return null;
+        }
     }
 
     public static List<String> getTimeToLaunchData(Launch thisLaunch){

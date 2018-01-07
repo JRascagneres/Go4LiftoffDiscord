@@ -44,10 +44,10 @@ public class Bot extends ListenerAdapter{
         }
 
         Timer redditTimer = new Timer();
-        redditTimer.schedule(new RedditService(jda), 0, 10000);
+        redditTimer.schedule(new RedditService(jda), 0, 60000);
 
         Timer twitterTimer = new Timer();
-        twitterTimer.schedule(new TwitterService(jda), 0, 30000);
+        twitterTimer.schedule(new TwitterService(jda), 0, 60000);
 
         Timer countdownTimer = new Timer();
         countdownTimer.schedule(new CountdownService(jda), 0, 60000);

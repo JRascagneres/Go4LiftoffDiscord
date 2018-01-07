@@ -8,6 +8,9 @@ import uk.co.rascagneres.spacexbot.Config.ConfigReader;
 import uk.co.rascagneres.spacexbot.Config.PermissionLevel;
 import uk.co.rascagneres.spacexbot.Utilities.Utils;
 
+import java.util.List;
+import java.util.Map;
+
 
 public class RedditModule extends ListenerAdapter{
     ConfigReader configReader = new ConfigReader();
@@ -59,6 +62,26 @@ public class RedditModule extends ListenerAdapter{
                 }
             }else{
                 embedBuilder.setAuthor("You are not authorised to run this command", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+            }
+            event.getChannel().sendMessage(embedBuilder.build()).queue();
+        }
+
+        if(command[0].equalsIgnoreCase(prefix + "getFollowedReddit")){
+            Boolean empty = true;
+            configReader = new ConfigReader();
+            Long channelID = event.getChannel().getIdLong();
+            embedBuilder.setAuthor("Followed Subreddits", null, "https://c1.staticflickr.com/1/735/32312416415_adf4f021b6_k.jpg");
+            for(Map.Entry<String, List<Long>> entry : configReader.getRedditMap().entrySet()){
+                String subredditName = entry.getKey();
+                List<Long> channelIDs = entry.getValue();
+                if(channelIDs.contains(channelID)){
+                    String redditTitle = Utils.getRedditTitle(subredditName);
+                    embedBuilder.addField(redditTitle, "/r/" + subredditName, false);
+                    empty = false;
+                }
+            }
+            if(empty){
+                embedBuilder.appendDescription("No subreddits followed in this channel");
             }
             event.getChannel().sendMessage(embedBuilder.build()).queue();
         }
