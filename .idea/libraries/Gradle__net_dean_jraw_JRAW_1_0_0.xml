@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: net.dean.jraw:JRAW:1.0.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../Gradle/caches/modules-2/files-2.1/net.dean.jraw/JRAW/1.0.0/c5865ed1762d9f6465424241b4f93143ba57ceaf/JRAW-1.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../Gradle/caches/modules-2/files-2.1/net.dean.jraw/JRAW/1.0.0/910af0fc2d5d9f6cc32ee40eaeeea2a1f645074e/JRAW-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
