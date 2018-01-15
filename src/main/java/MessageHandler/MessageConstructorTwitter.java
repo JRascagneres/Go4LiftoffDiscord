@@ -32,7 +32,7 @@ public class MessageConstructorTwitter {
 
         for(int i = 0; i < channelIDs.size(); i++){
             constructor.sendMessageNoReset(channelIDs.get(i));
-            System.out.println("NEW TWEET by " + tweet.getUser() + " CHANNEL: " + channelIDs.get(i));
+            System.out.println("NEW TWEET by " + tweet.getUser().getScreenName() + " CHANNEL: " + channelIDs.get(i));
         }
     }
 

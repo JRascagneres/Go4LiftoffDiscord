@@ -4,7 +4,7 @@ plugins {
     id'com.github.johnrengelman.shadow' version '1.2.4'
 }
 
-mainClassName = 'uk.co.rascagneres.goforlaunch.Core'
+mainClassName = 'Core'
 
 version '1.0'
 def jdaVersion = '3.3.1_303'

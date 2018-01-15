@@ -1,3 +1,4 @@
+import Config.ConfigReader;
 import CoreModules.CommandsCore;
 import CoreModules.CommandsLaunches;
 import CoreModules.CommandsReddit;
@@ -19,7 +20,8 @@ public class Core extends ListenerAdapter{
 
     public static void main(String [] args){
         try{
-            jda = new JDABuilder(AccountType.BOT).setToken("MjkzMTQwNDg1ODEwNDIxNzYy.DRCMYw.ohvYj2cCtP1TORvfuTIwOl3dGYw").buildBlocking();
+            ConfigReader configReader = new ConfigReader();
+            jda = new JDABuilder(AccountType.BOT).setToken(configReader.getToken()).buildBlocking();
             jda.getPresence().setGame(Game.of("Readying For Launch!"));
             jda.addEventListener(new Core());
             jda.addEventListener(new CommandsCore());
