@@ -82,7 +82,6 @@ public class MessageConstructor {
     public void sendPrivate(User user){
         setData();
         user.openPrivateChannel().queue( (channel) -> channel.sendMessage(embedBuilder.build()).queue());
-        embedBuilder = new EmbedBuilder();
     }
 
 }
