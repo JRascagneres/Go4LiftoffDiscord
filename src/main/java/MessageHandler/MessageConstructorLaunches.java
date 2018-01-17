@@ -3,6 +3,7 @@ package MessageHandler;
 import Launches.LaunchObject;
 import Launches.LaunchesReader;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.User;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class MessageConstructorLaunches {
         constructor.sendMessage(channelID);
     }
 
-    public void sendLaunchAlertMessage(LaunchObject launch, List<Long> channelIDs){
+    public void sendLaunchAlertMessage(LaunchObject launch, List<Long> channelIDs, List<Long> userNotifIDs){
         List<String> launchTimeData = launch.timeToLaunchData;
         Long days = Long.parseLong(launchTimeData.get(2));
         Long hours = Long.parseLong(launchTimeData.get(3));
@@ -82,6 +83,13 @@ public class MessageConstructorLaunches {
             constructor.setThumbnailURL(launch.rocket.imageURL);
             for(int i = 0; i < channelIDs.size(); i++) {
                 constructor.sendMessageNoReset(channelIDs.get(i));
+            }
+
+            if(userNotifIDs != null) {
+                for (int i = 0; i < userNotifIDs.size(); i++) {
+                    User user = jda.getUserById(userNotifIDs.get(i));
+                    constructor.sendPrivate(user);
+                }
             }
         }
     }

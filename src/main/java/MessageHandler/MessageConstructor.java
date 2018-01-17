@@ -2,6 +2,7 @@ package MessageHandler;
 
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
 
 import java.awt.*;
@@ -81,7 +82,8 @@ public class MessageConstructor {
 
     public void sendPrivate(User user){
         setData();
-        user.openPrivateChannel().queue( (channel) -> channel.sendMessage(embedBuilder.build()).queue());
+        PrivateChannel channel = user.openPrivateChannel().complete();
+        channel.sendMessage(embedBuilder.build()).queue();
     }
 
 }

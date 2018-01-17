@@ -2,9 +2,11 @@ package Config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.dv8tion.jda.core.entities.User;
 
 import java.io.File;
 import java.io.FileReader;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,10 @@ public class ConfigReader {
 
     public List<Long> getCountdownChannels(){
         return config.countdownChannelIDs;
+    }
+
+    public Map<String, List<Long>> getUserNoficationMap(){
+        return config.userNoifications;
     }
 
     public void addRedditChannelID(String subreddit, Long channelID){
@@ -103,6 +109,23 @@ public class ConfigReader {
         config.countdownChannelIDs.remove(channelID);
         saveJSONFile();
         return true;
+    }
+
+    public void addUserNotifications(String agency, Long userID){
+        if(getUserNoficationMap().get(agency) != null){
+            getUserNoficationMap().get(agency).add(userID);
+        }else{
+            getUserNoficationMap().put(agency, Collections.singletonList(userID));
+        }
+        saveJSONFile();
+    }
+
+    public void removeUserNotifications(String agency, Long userID){
+        getUserNoficationMap().get(agency).remove(userID);
+        if(getUserNoficationMap().get(agency).isEmpty()){
+            getUserNoficationMap().remove(agency);
+        }
+        saveJSONFile();
     }
 
     public void saveJSONFile(){

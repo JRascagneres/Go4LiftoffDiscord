@@ -59,7 +59,7 @@ public class LaunchesReader {
                         status = "Failed";
                         break;
                 }
-
+                
                 libraryObject.launches.get(i).statusText = status;
                 libraryObject.launches.get(i).padName = libraryObject.launches.get(i).location.pads.get(0).name;
                 libraryObject.launches.get(i).timeToLaunchData = getTimeToLaunchData(libraryObject.launches.get(i));

@@ -1,5 +1,7 @@
 package Config;
 
+import net.dv8tion.jda.core.entities.User;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,4 +25,7 @@ public class ConfigObject {
 
     //Countdown channels    --> Channel list
     public List<Long> countdownChannelIDs = new LinkedList<>();
+
+    //Alert pm messages
+    public Map<String, List<Long>> userNoifications = new HashMap<>();
 }

@@ -19,7 +19,7 @@ public class ConfigReddit {
     public boolean addReddit(String subreddit, Long channelID){
         if(checkSubredditExists(subreddit)){
             if(!(configReader.getRedditMap().containsKey(subreddit) && configReader.getRedditMap().get(subreddit).contains(channelID))){
-                addReddit(subreddit, channelID);
+                configReader.addRedditChannelID(subreddit, channelID);
                 return true;
             }
         }
@@ -28,7 +28,7 @@ public class ConfigReddit {
 
     public boolean removeReddit(String subreddit, Long channelID){
         if(configReader.getRedditMap().containsKey(subreddit) && configReader.getRedditMap().get(subreddit).contains(channelID)){
-            removeReddit(subreddit, channelID);
+            configReader.removeRedditChannelID(subreddit, channelID);
             return true;
         }
         return false;
