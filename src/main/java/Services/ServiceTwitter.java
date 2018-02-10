@@ -18,6 +18,7 @@ public class ServiceTwitter extends TimerTask {
     Map<String, Boolean> firstRunMap = new HashMap<>();
 
     Map<String, List<Long>> checkedMap = new HashMap<>();
+    Map<String, List<Status>> newTweetsMap = new HashMap<>();
 
     JDA jda;
     int initialTweetCheck = 8;
@@ -63,7 +64,7 @@ public class ServiceTwitter extends TimerTask {
                 firstRunMap.put(twitterUser, false);
             }
 
-            Map<String, List<Status>> newTweetsMap = new HashMap<>();
+
 
 
             List<Status> tweets = configTwitter.getMainTweetsOnly(twitterUser);
@@ -82,14 +83,23 @@ public class ServiceTwitter extends TimerTask {
                     checkedMap.get(twitterUser).add(tweet.getId());
                 }
             }
+        }
 
-            if (newTweetsMap.get(twitterUser) != null && !newTweetsMap.get(twitterUser).isEmpty() && !checkedMap.isEmpty()) {
-                for (int i = 0; i < newTweetsMap.get(twitterUser).size(); i++) {
-                    MessageConstructorTwitter messageConstructorTwitter = new MessageConstructorTwitter(jda);
-                    messageConstructorTwitter.sendTweetMessages(tweets.get(i), channelIDs);
+        if(!newTweetsMap.isEmpty()){
+            Iterator<Map.Entry<String, List<Status>>> iterator = newTweetsMap.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String, List<Status>> tweetSet = iterator.next();
+                String twitterUser = tweetSet.getKey();
+                List<Status> tweets = tweetSet.getValue();
+                List<Long> channelIDs = twitterMap.get(twitterUser);
+                for (int i = 0; i < tweets.size(); i++){
+                    if(checkedMap.containsKey(twitterUser) && checkedMap.get(twitterUser).contains(tweets.get(i).getId())){
+                        MessageConstructorTwitter messageConstructorTwitter = new MessageConstructorTwitter(jda);
+                        messageConstructorTwitter.sendTweetMessages(tweets.get(i), channelIDs);
+                    }
                 }
+                iterator.remove();
             }
-
         }
     }
 }

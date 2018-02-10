@@ -48,7 +48,7 @@ public class ServiceReddit extends TimerTask {
                 ConfigReddit configReddit = new ConfigReddit();
                 submissions = configReddit.getRedditPosts(entry.getKey(), 5);
             }catch(Exception e){
-                System.out.println("GET POSTS FAILED");
+                //System.out.println("GET POSTS FAILED");
             }
 
             if (firstRunMap.get(entry.getKey()) == true){
@@ -84,8 +84,10 @@ public class ServiceReddit extends TimerTask {
                 List<Submission> submissionList = submissionSet.getValue();
                 List<Long> channelIDs = redditChannelMap.get(subreddit);
                 for (int i = 0; i < submissionList.size(); i++){
-                    MessageConstructorReddit messageConstructorReddit = new MessageConstructorReddit(jda);
-                    messageConstructorReddit.sendRedditMessages(submissionList.get(i), channelIDs);
+                    if(checkedMap.containsKey(subreddit) && checkedMap.get(subreddit).contains(submissionList.get(i).getId())) {
+                        MessageConstructorReddit messageConstructorReddit = new MessageConstructorReddit(jda);
+                        messageConstructorReddit.sendRedditMessages(submissionList.get(i), channelIDs);
+                    }
                 }
                 iterator.remove();
             }

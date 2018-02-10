@@ -23,16 +23,18 @@ public class MessageConstructorTwitter {
     }
 
     public void sendTweetMessages(Status tweet, List<Long> channelIDs){
-        constructor.setTitle("New Tweet by " + tweet.getUser().getScreenName());
-        constructor.appendDescription(tweet.getText());
+        if(tweet != null && channelIDs != null) {
+            constructor.setTitle("New Tweet by " + tweet.getUser().getScreenName());
+            constructor.appendDescription(tweet.getText());
 
-        constructor.addField("Tweet Link:", "https://twitter.com/" + tweet.getUser().getScreenName() + "/status/" + tweet.getId());
+            constructor.addField("Tweet Link:", "https://twitter.com/" + tweet.getUser().getScreenName() + "/status/" + tweet.getId());
 
-        constructor.setThumbnailURL(tweet.getUser().getProfileImageURL());
+            constructor.setThumbnailURL(tweet.getUser().getProfileImageURL());
 
-        for(int i = 0; i < channelIDs.size(); i++){
-            constructor.sendMessageNoReset(channelIDs.get(i));
-            System.out.println("NEW TWEET by " + tweet.getUser().getScreenName() + " CHANNEL: " + channelIDs.get(i));
+            for (int i = 0; i < channelIDs.size(); i++) {
+                constructor.sendMessageNoReset(channelIDs.get(i));
+                System.out.println("NEW TWEET by " + tweet.getUser().getScreenName() + " CHANNEL: " + channelIDs.get(i));
+            }
         }
     }
 

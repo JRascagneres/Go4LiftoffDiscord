@@ -64,7 +64,7 @@ public class MessageConstructorLaunches {
                 }
             }else{
                 if (hours == 0){
-                    if(minutes == 30 || minutes == 15 || minutes == 1){
+                    if(minutes == 30 || minutes == 15 || minutes == 5 ||minutes == 1){
                         netData = minutes + " Minute(s)";
                     }
                 }
@@ -77,9 +77,15 @@ public class MessageConstructorLaunches {
             String vehicle = launch.name.split("\\|")[0];
             constructor.appendDescription(
                     "**Launch Vehicle: **" + vehicle + "\n" +
-                     "**NET in " + netData + "**" + "\n\n" +
-                     getLaunchVidURLs(launch)
-            );
+                     "**NET in " + netData);
+
+            if(launch.tbddate == 1 || launch.tbdtime == 1){
+                constructor.appendDescription(" **TBD**");
+            }
+
+            constructor.appendDescription(
+                    "**" + "\n\n" +
+                    getLaunchVidURLs(launch));
             constructor.setThumbnailURL(launch.rocket.imageURL);
             for(int i = 0; i < channelIDs.size(); i++) {
                 constructor.sendMessageNoReset(channelIDs.get(i));

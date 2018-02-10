@@ -30,7 +30,9 @@ public class ServiceLaunchAlerts extends TimerTask{
 
             LaunchObject launchObject = launchObjectList.get(i);
 
-            messageConstructorLaunches.sendLaunchAlertMessage(launchObject, channelIDs, userNotifs);
+            if(launchObject.tbdtime == 0 && launchObject.tbddate == 0) {
+                messageConstructorLaunches.sendLaunchAlertMessage(launchObject, channelIDs, userNotifs);
+            }
 
         }
     }

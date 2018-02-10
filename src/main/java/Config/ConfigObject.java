@@ -27,5 +27,5 @@ public class ConfigObject {
     public List<Long> countdownChannelIDs = new LinkedList<>();
 
     //Alert pm messages
-    public Map<String, List<Long>> userNoifications = new HashMap<>();
+    public Map<String, List<Long>> userNotifications = new HashMap<>();
 }

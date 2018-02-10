@@ -12,6 +12,7 @@ public class ConfigTwitter {
     ConfigReader configReader = new ConfigReader();
 
     public boolean addTwitterUser(String twitterUser, Long channelID){
+        twitterUser = twitterUser.toLowerCase();
         if(checkTwitterExists(twitterUser)){
             if(!(configReader.getTwitterMap().containsKey(twitterUser) && configReader.getTwitterMap().get(twitterUser).contains(channelID))){
                 configReader.addTwitterChannelID(twitterUser, channelID);
@@ -22,6 +23,7 @@ public class ConfigTwitter {
     }
 
     public boolean removeTwitterUser(String twitterUser, Long channelID){
+        twitterUser = twitterUser.toLowerCase();
         if(configReader.getTwitterMap().containsKey(twitterUser) && configReader.getTwitterMap().get(twitterUser).contains(channelID)){
             configReader.removeTwitterChannelID(twitterUser, channelID);
             return true;
@@ -47,7 +49,7 @@ public class ConfigTwitter {
         try {
             statusList = twitter.getUserTimeline(user);
         }catch (Exception e){
-            System.out.println("FAILED TO GET TWEET");
+            //System.out.println("FAILED TO GET TWEET");
         }
 
         return statusList;

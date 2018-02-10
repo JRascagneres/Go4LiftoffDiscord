@@ -5,6 +5,7 @@ import Commands.CommandReader;
 import Config.ConfigReader;
 import Launches.LaunchesReader;
 import MessageHandler.MessageConstructor;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -36,6 +37,16 @@ public class CommandsCore extends ListenerAdapter{
                     "**App Name:** GoForLaunchBot \n " +
                     "**Owner:** <@150768477152477186> \n " +
                     "Bot still in beta, to add to your server message Scorp");
+            constructor.sendMessage(event.getChannel().getIdLong());
+        }
+
+        if(command[0].equalsIgnoreCase(prefix + "getServers")){
+            constructor = new MessageConstructor("Servers Joined", event.getJDA());
+            List<Guild> currentServers = event.getJDA().getGuilds();
+            for(int i = 0; i < currentServers.size(); i++){
+                Guild currentGuild = currentServers.get(i);
+                constructor.addField(currentGuild.getName(), currentGuild.getId());
+            }
             constructor.sendMessage(event.getChannel().getIdLong());
         }
 

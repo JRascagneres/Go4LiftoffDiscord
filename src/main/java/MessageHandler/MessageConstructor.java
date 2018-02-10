@@ -71,8 +71,12 @@ public class MessageConstructor {
     }
 
     public void sendMessageNoReset(Long channelID){
-        setData();
-        jda.getTextChannelById(channelID).sendMessage(embedBuilder.build()).queue();
+        try {
+            setData();
+            jda.getTextChannelById(channelID).sendMessage(embedBuilder.build()).queue();
+        }catch (Exception e){
+            System.out.println("FAILED TO SEND MESSAGE");
+        }
     }
 
     public void sendMessage(Long channelID) {
@@ -81,9 +85,13 @@ public class MessageConstructor {
     }
 
     public void sendPrivate(User user){
-        setData();
-        PrivateChannel channel = user.openPrivateChannel().complete();
-        channel.sendMessage(embedBuilder.build()).queue();
+        try{
+            setData();
+            PrivateChannel channel = user.openPrivateChannel().complete();
+            channel.sendMessage(embedBuilder.build()).queue();
+        }catch (Exception e){
+            System.out.println("FAILED TO SEND MESSAGE");
+        }
     }
 
 }

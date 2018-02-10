@@ -2,7 +2,6 @@ package Config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.dv8tion.jda.core.entities.User;
 
 import java.io.File;
 import java.io.FileReader;
@@ -52,7 +51,7 @@ public class ConfigReader {
     }
 
     public Map<String, List<Long>> getUserNoficationMap(){
-        return config.userNoifications;
+        return config.userNotifications;
     }
 
     public void addRedditChannelID(String subreddit, Long channelID){

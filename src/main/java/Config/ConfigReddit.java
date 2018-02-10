@@ -17,6 +17,7 @@ public class ConfigReddit {
     ConfigReader configReader = new ConfigReader();
 
     public boolean addReddit(String subreddit, Long channelID){
+        subreddit = subreddit.toLowerCase();
         if(checkSubredditExists(subreddit)){
             if(!(configReader.getRedditMap().containsKey(subreddit) && configReader.getRedditMap().get(subreddit).contains(channelID))){
                 configReader.addRedditChannelID(subreddit, channelID);
@@ -27,6 +28,7 @@ public class ConfigReddit {
     }
 
     public boolean removeReddit(String subreddit, Long channelID){
+        subreddit = subreddit.toLowerCase();
         if(configReader.getRedditMap().containsKey(subreddit) && configReader.getRedditMap().get(subreddit).contains(channelID)){
             configReader.removeRedditChannelID(subreddit, channelID);
             return true;
