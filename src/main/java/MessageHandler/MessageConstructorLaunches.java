@@ -2,6 +2,7 @@ package MessageHandler;
 
 import Launches.LaunchObject;
 import Launches.LaunchesReader;
+import Utilities.Utils;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.User;
 
@@ -124,13 +125,24 @@ public class MessageConstructorLaunches {
             returnString = "**Watch Live: **";
             for (int i = 0; i < launchObject.vidURLs.size(); i++) {
                 String url = launchObject.vidURLs.get(i);
+                url = getFormattedURL(url);
                 returnString += "\n" + url;
             }
             returnString += "\n";
         }
-        returnString += "**Rocket Watch: ** \n https://rocketwatch.yasiu.pl/?id=" + launchObject.id;
+        returnString += "**Follow Along:** \n[Rocket Watch](https://rocketwatch.yasiu.pl/?id=" + launchObject.id + "&utm_source=discord&utm_campaign=launchbot)" ;
 
         return returnString;
+    }
+
+    public String getFormattedURL(String vidURL){
+        if(vidURL.contains("youtube")){
+            return "[YouTube](" + vidURL + ")";
+        }else{
+            System.out.println(vidURL.indexOf("."));
+            String domain = vidURL.substring(Utils.getNthIndex(vidURL, "/".toCharArray()[0], 2) + 1, Utils.getNthIndex(vidURL, "/".toCharArray()[0], 3));
+            return "[" + domain + "](" + vidURL + ")";
+        }
     }
 
 }

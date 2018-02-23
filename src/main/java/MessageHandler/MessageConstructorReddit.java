@@ -33,7 +33,7 @@ public class MessageConstructorReddit {
             constructor.addField("Post Text", submission.getSelfText().substring(0, charLimit));
         }
 
-        constructor.addField("Reddit Posts: ", "https://www.reddit.com" + submission.getPermalink());
+        constructor.addField("Reddit Post: ", "https://www.reddit.com" + submission.getPermalink());
 
         for(int i = 0; i < channelIDs.size(); i++) {
             constructor.sendMessageNoReset(channelIDs.get(i));

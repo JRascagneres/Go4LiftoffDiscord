@@ -41,8 +41,8 @@ public class CommandsCore extends ListenerAdapter{
         }
 
         if(command[0].equalsIgnoreCase(prefix + "getServers")){
-            constructor = new MessageConstructor("Servers Joined", event.getJDA());
             List<Guild> currentServers = event.getJDA().getGuilds();
+            constructor = new MessageConstructor("Servers Joined: #" + currentServers.size(), event.getJDA());
             for(int i = 0; i < currentServers.size(); i++){
                 Guild currentGuild = currentServers.get(i);
                 constructor.addField(currentGuild.getName(), currentGuild.getId());

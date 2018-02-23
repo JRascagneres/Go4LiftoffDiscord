@@ -52,10 +52,10 @@ public class ServiceTwitter extends TimerTask {
                 initialise();
             }
 
-            List<Long> channelIDs = entry.getValue();
+            List<Status> tweets = configTwitter.getMainTweetsOnly(twitterUser);
 
             if (firstRunMap.get(twitterUser) == true) {
-                List<Status> tweets = configTwitter.getMainTweetsOnly(twitterUser);
+
                 for (int i = 0; i < min(initialTweetCheck, tweets.size()); i++) {
                     List<Long> checked = checkedMap.get(twitterUser);
                     checked.add(tweets.get(i).getId());
@@ -64,10 +64,6 @@ public class ServiceTwitter extends TimerTask {
                 firstRunMap.put(twitterUser, false);
             }
 
-
-
-
-            List<Status> tweets = configTwitter.getMainTweetsOnly(twitterUser);
             for (int i = 0; i < min(tweetCheck, tweets.size()); i++) {
                 Status tweet = tweets.get(i);
                 if (!checkedMap.get(twitterUser).contains(tweet.getId())) {
