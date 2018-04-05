@@ -34,9 +34,10 @@ public class CommandsCore extends ListenerAdapter{
         if(command[0].equalsIgnoreCase(prefix + "info")){
             constructor = new MessageConstructor("Bot Info", event.getJDA());
             constructor.appendDescription(
-                    "**App Name:** GoForLaunchBot \n " +
-                    "**Owner:** <@150768477152477186> \n " +
-                    "Bot still in beta, to add to your server message Scorp");
+                    "**App Name:** Go4Liftoff \n" +
+                    "**Owner:** <@150768477152477186> \n" +
+                    "Bot still in beta, invite link can be found on our website \n" +
+                    "[Go4Liftoff Website](https://go4liftoff.com)");
             constructor.sendMessage(event.getChannel().getIdLong());
         }
 

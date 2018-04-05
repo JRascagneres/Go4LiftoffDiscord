@@ -21,7 +21,7 @@ public class ServiceTwitter extends TimerTask {
     Map<String, List<Status>> newTweetsMap = new HashMap<>();
 
     JDA jda;
-    int initialTweetCheck = 8;
+    int initialTweetCheck = 5;
     int tweetCheck = 2;
 
     public ServiceTwitter (JDA jda){
@@ -90,8 +90,10 @@ public class ServiceTwitter extends TimerTask {
                 List<Long> channelIDs = twitterMap.get(twitterUser);
                 for (int i = 0; i < tweets.size(); i++){
                     if(checkedMap.containsKey(twitterUser) && checkedMap.get(twitterUser).contains(tweets.get(i).getId())){
-                        MessageConstructorTwitter messageConstructorTwitter = new MessageConstructorTwitter(jda);
-                        messageConstructorTwitter.sendTweetMessages(tweets.get(i), channelIDs);
+                        if(checkedMap.get(twitterUser).size() >= initialTweetCheck && checkedMap.get(twitterUser).get(i) != null) {
+                            MessageConstructorTwitter messageConstructorTwitter = new MessageConstructorTwitter(jda);
+                            messageConstructorTwitter.sendTweetMessages(tweets.get(i), channelIDs);
+                        }
                     }
                 }
                 iterator.remove();

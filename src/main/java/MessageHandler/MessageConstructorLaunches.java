@@ -30,7 +30,9 @@ public class MessageConstructorLaunches {
                     "**Launch Vehicle: **" + vehicle + "\n" +
                     getLaunchBody(nextLaunch));
 
+            constructor.appendDescription("\n\n" + getMoreInfoURLs(nextLaunch));
             constructor.appendDescription("\n\n" + getLaunchVidURLs(nextLaunch));
+
         }
         constructor.sendMessage(channelID);
     }
@@ -45,7 +47,7 @@ public class MessageConstructorLaunches {
             LaunchObject launch = launchObjectList.get(i);
             constructor.addField("Launch Vehicle: " + launch.name.split("\\|")[0], getLaunchBody(launch));
         }
-
+        constructor.addField("**See More Launches**", "[Go4Liftoff Website](https://go4liftoff.com)");
         constructor.sendMessage(channelID);
     }
 
@@ -86,7 +88,11 @@ public class MessageConstructorLaunches {
 
             constructor.appendDescription(
                     "**" + "\n\n" +
+                            getMoreInfoURLs(launch));
+            constructor.appendDescription(
+                    "**" + "\n\n" +
                     getLaunchVidURLs(launch));
+
             constructor.setThumbnailURL(launch.rocket.imageURL);
             for(int i = 0; i < channelIDs.size(); i++) {
                 constructor.sendMessageNoReset(channelIDs.get(i));
@@ -121,8 +127,8 @@ public class MessageConstructorLaunches {
     public String getLaunchVidURLs(LaunchObject launchObject){
         String returnString = "";
 
-        if(launchObject.vidURLs.size() != 0) {
-            returnString = "**Watch Live: **";
+        if(launchObject.vidURLs != null && launchObject.vidURLs.size() != 0) {
+            returnString = "**Follow Along Live: **";
             for (int i = 0; i < launchObject.vidURLs.size(); i++) {
                 String url = launchObject.vidURLs.get(i);
                 url = getFormattedURL(url);
@@ -130,8 +136,14 @@ public class MessageConstructorLaunches {
             }
             returnString += "\n";
         }
-        returnString += "**Follow Along:** \n[Rocket Watch](https://rocketwatch.yasiu.pl/?id=" + launchObject.id + "&utm_source=discord&utm_campaign=launchbot)" ;
+        return returnString;
+    }
 
+    public String getMoreInfoURLs(LaunchObject launchObject){
+        String returnString = "";
+        returnString = "**More Info: **";
+        returnString += "\n[Go4Liftoff](https://go4liftoff.com/#page=singleLaunch?filters=launchID=" + launchObject.id + ")" ;
+        returnString += "\n[Rocket Watch](https://rocketwatch.yasiu.pl/?id=" + launchObject.id + "&utm_source=discord&utm_campaign=launchbot)" ;
         return returnString;
     }
 
@@ -139,7 +151,6 @@ public class MessageConstructorLaunches {
         if(vidURL.contains("youtube")){
             return "[YouTube](" + vidURL + ")";
         }else{
-            System.out.println(vidURL.indexOf("."));
             String domain = vidURL.substring(Utils.getNthIndex(vidURL, "/".toCharArray()[0], 2) + 1, Utils.getNthIndex(vidURL, "/".toCharArray()[0], 3));
             return "[" + domain + "](" + vidURL + ")";
         }

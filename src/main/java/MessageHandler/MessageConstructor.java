@@ -75,7 +75,7 @@ public class MessageConstructor {
             setData();
             jda.getTextChannelById(channelID).sendMessage(embedBuilder.build()).queue();
         }catch (Exception e){
-            System.out.println("FAILED TO SEND MESSAGE");
+            System.out.println("FAILED TO SEND MESSAGE - " + channelID);
         }
     }
 
