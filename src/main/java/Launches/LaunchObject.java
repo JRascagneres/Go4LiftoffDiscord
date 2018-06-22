@@ -14,6 +14,7 @@ public class LaunchObject {
     public int status;
     public LocationObject location;
     public String padName;
+    public AgencyObject lsp;
 
     //Added
     public String statusText;

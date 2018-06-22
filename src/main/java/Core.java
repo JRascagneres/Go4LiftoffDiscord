@@ -21,7 +21,7 @@ public class Core extends ListenerAdapter{
         try{
             ConfigReader configReader = new ConfigReader();
             jda = new JDABuilder(AccountType.BOT).setToken(configReader.getToken()).buildBlocking();
-            jda.getPresence().setGame(Game.of("Readying For Launch!"));
+            jda.getPresence().setGame(Game.of("Go4Liftoff.com"));
             jda.getSelfUser().getManager().setName("Go4Liftoff").queue();
             jda.addEventListener(new Core());
             jda.addEventListener(new CommandsCore());

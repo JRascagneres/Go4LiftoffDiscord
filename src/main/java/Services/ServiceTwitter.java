@@ -90,7 +90,7 @@ public class ServiceTwitter extends TimerTask {
                 List<Long> channelIDs = twitterMap.get(twitterUser);
                 for (int i = 0; i < tweets.size(); i++){
                     if(checkedMap.containsKey(twitterUser) && checkedMap.get(twitterUser).contains(tweets.get(i).getId())){
-                        if(checkedMap.get(twitterUser).size() >= initialTweetCheck && checkedMap.get(twitterUser).get(i) != null) {
+                        if(checkedMap.get(twitterUser).size() > initialTweetCheck && checkedMap.get(twitterUser).get(i) != null) {
                             MessageConstructorTwitter messageConstructorTwitter = new MessageConstructorTwitter(jda);
                             messageConstructorTwitter.sendTweetMessages(tweets.get(i), channelIDs);
                         }

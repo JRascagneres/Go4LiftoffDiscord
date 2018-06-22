@@ -1,12 +1,14 @@
 package MessageHandler;
 
+import Config.ConfigNotifications;
+import Config.ConfigReader;
 import Launches.LaunchObject;
 import Launches.LaunchesReader;
 import Utilities.Utils;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.User;
 
-import java.util.List;
+import java.util.*;
 
 public class MessageConstructorLaunches {
     private JDA jda;
@@ -38,17 +40,75 @@ public class MessageConstructorLaunches {
     }
 
     public void sendMultiLaunchMessage(Long channelID, int amount){
+        sendMultiLaunchMessage(channelID, amount, true);
+    }
+
+
+    public void sendMultiLaunchMessage(Long channelID, int amount, boolean upcoming){
         LaunchesReader launchesReader = new LaunchesReader();
 
-        List<LaunchObject> launchObjectList = launchesReader.getLaunches(amount).launches;
-        MessageConstructor constructor = new MessageConstructor("Upcoming " + launchObjectList.size() + " Launches", jda);
+        List<LaunchObject> launchObjectList;
+        MessageConstructor constructor;
+        if(upcoming) {
+            launchObjectList = launchesReader.getLaunches(amount).launches;
+            constructor = new MessageConstructor("Upcoming " + launchObjectList.size() + " Launches", jda);
+        }else {
+            launchObjectList = launchesReader.getLaunches(amount, false).launches;
+            constructor = new MessageConstructor("Past " + launchObjectList.size() + " Launches", jda);
+        }
 
         for(int i = 0; i < launchObjectList.size(); i++){
             LaunchObject launch = launchObjectList.get(i);
-            constructor.addField("Launch Vehicle: " + launch.name.split("\\|")[0], getLaunchBody(launch));
+
+            if(upcoming) {
+                constructor.addField("Launch Vehicle: " + launch.name.split("\\|")[0], getLaunchBody(launch));
+            }else{
+                constructor.addField("Launch Vehicle: " + launch.name.split("\\|")[0], getLaunchBody(launch, false));
+            }
         }
         constructor.addField("**See More Launches**", "[Go4Liftoff Website](https://go4liftoff.com)");
         constructor.sendMessage(channelID);
+    }
+
+    public void sendLaunchCustomAlertMessage(LaunchObject launch, Map<Integer, List<Long>> channelMap){
+        List<String> launchTimeData = launch.timeToLaunchData;
+        Long days = Long.parseLong(launchTimeData.get(2));
+        Long hours = Long.parseLong(launchTimeData.get(3));
+        Long minutes = Long.parseLong(launchTimeData.get(4));
+        Integer totalMinutes = Integer.parseInt(launchTimeData.get(5));
+        String netData = days + " Day(s) " + hours + " Hour(s) " + minutes + " Minute(s)";
+
+        List<Long> sendToChannelIDs =  new LinkedList<>();
+
+        if(channelMap.containsKey(totalMinutes)){
+            sendToChannelIDs.addAll(channelMap.get(totalMinutes));
+        }else{
+            return;
+        }
+
+        MessageConstructor constructor = new MessageConstructor("Launch Alert", jda);
+
+        String vehicle = launch.name.split("\\|")[0];
+        constructor.appendDescription(
+                "**Launch Vehicle: **" + vehicle + "\n" +
+                        "**NET in " + netData + "**");
+
+        if(launch.tbddate == 1 || launch.tbdtime == 1){
+            constructor.appendDescription(" **TBD**");
+        }
+
+        constructor.appendDescription(
+                "\n\n" +
+                        getMoreInfoURLs(launch));
+        constructor.appendDescription(
+                "\n\n" +
+                        getLaunchVidURLs(launch));
+
+        constructor.setThumbnailURL(launch.rocket.imageURL);
+        for(int i = 0; i < sendToChannelIDs.size(); i++) {
+            constructor.sendMessageNoReset(sendToChannelIDs.get(i));
+        }
+
     }
 
     public void sendLaunchAlertMessage(LaunchObject launch, List<Long> channelIDs, List<Long> userNotifIDs){
@@ -80,17 +140,17 @@ public class MessageConstructorLaunches {
             String vehicle = launch.name.split("\\|")[0];
             constructor.appendDescription(
                     "**Launch Vehicle: **" + vehicle + "\n" +
-                     "**NET in " + netData);
+                     "**NET in " + netData + "**");
 
             if(launch.tbddate == 1 || launch.tbdtime == 1){
                 constructor.appendDescription(" **TBD**");
             }
 
             constructor.appendDescription(
-                    "**" + "\n\n" +
+                    "\n\n" +
                             getMoreInfoURLs(launch));
             constructor.appendDescription(
-                    "**" + "\n\n" +
+                    "\n\n" +
                     getLaunchVidURLs(launch));
 
             constructor.setThumbnailURL(launch.rocket.imageURL);
@@ -100,50 +160,78 @@ public class MessageConstructorLaunches {
 
             if(userNotifIDs != null) {
                 for (int i = 0; i < userNotifIDs.size(); i++) {
+
+                    List<Integer> userLSPs = new LinkedList<>();
                     User user = jda.getUserById(userNotifIDs.get(i));
-                    constructor.sendPrivate(user);
+
+                    ConfigReader configReader = new ConfigReader();
+                    Iterator iterator = configReader.getUserNoficationMap().entrySet().iterator();
+
+                    while(iterator.hasNext()){
+                        Map.Entry<String, List<Long>> pair = (Map.Entry) iterator.next();
+                        if(pair.getValue().contains(user.getIdLong())){
+                            userLSPs.add(Integer.valueOf(pair.getKey()));
+                        }
+                    }
+
+                    if(userLSPs.contains(launch.lsp.id) || userLSPs.contains(-1)){
+                        constructor.sendPrivate(user);
+                    }
                 }
             }
         }
     }
-    
+
     public String getLaunchBody(LaunchObject launchObject){
+        return getLaunchBody(launchObject, true);
+    }
+
+    public String getLaunchBody(LaunchObject launchObject, boolean upcoming){
         String payload = launchObject.name.split("\\|")[1];
         String textBody =
                 "**Launch Status: " + launchObject.statusText + "** \n" +
                 "**Payload: **"  + payload + "\n" +
-                "**Launch Site: **" + launchObject.padName + "\n" +
-                "**NET: **" + launchObject.timeToLaunchData.get(0);
+                "**Launch Site: **" + launchObject.padName + "\n";
+
+        if(upcoming) {
+            textBody += "**NET: **";
+        }else{
+            textBody += "**Launched On: **";
+        }
+
+        textBody += launchObject.timeToLaunchData.get(0);
 
         if(launchObject.tbddate == 1 || launchObject.tbdtime == 1){
            textBody += " **TBD**";
         }
 
-        textBody += "\n" + launchObject.timeToLaunchData.get(1);
+        if(upcoming) {
+            textBody += "\n" + launchObject.timeToLaunchData.get(1);
+        }
         
         return textBody;
     }
 
     public String getLaunchVidURLs(LaunchObject launchObject){
         String returnString = "";
-
+        returnString = "**Follow Along Live: **";
         if(launchObject.vidURLs != null && launchObject.vidURLs.size() != 0) {
-            returnString = "**Follow Along Live: **";
+
             for (int i = 0; i < launchObject.vidURLs.size(); i++) {
                 String url = launchObject.vidURLs.get(i);
                 url = getFormattedURL(url);
                 returnString += "\n" + url;
             }
-            returnString += "\n";
         }
+        returnString += "\n[Rocket Watch](https://rocketwatch.yasiu.pl/?id=" + launchObject.id + "&utm_source=discord&utm_campaign=launchbot)" ;
+        returnString += "\n";
         return returnString;
     }
 
     public String getMoreInfoURLs(LaunchObject launchObject){
         String returnString = "";
-        returnString = "**More Info: **";
+        returnString = "**Learn More: **";
         returnString += "\n[Go4Liftoff](https://go4liftoff.com/#page=singleLaunch?filters=launchID=" + launchObject.id + ")" ;
-        returnString += "\n[Rocket Watch](https://rocketwatch.yasiu.pl/?id=" + launchObject.id + "&utm_source=discord&utm_campaign=launchbot)" ;
         return returnString;
     }
 

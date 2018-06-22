@@ -48,7 +48,24 @@ public class CommandsLaunches extends ListenerAdapter {
             }
         }
 
+        if(command[0].equalsIgnoreCase(prefix + "pastLaunches") || command[0].equalsIgnoreCase(prefix + "pl")){
+            int amount = 10;
+            try {
+                if (command.length >= 2) {
+                    amount = Integer.parseInt(command[1]);
+                }
+                amount = min(amount, 10);
+                constructor.sendMultiLaunchMessage(event.getChannel().getIdLong(), amount, false);
+            }catch(Exception e){
+                e.printStackTrace();
+                messageConstructor.setAuthor("Please only supply a number!");
+                messageConstructor.setFailColor();
+                messageConstructor.sendMessage(event.getChannel().getIdLong());
+            }
+        }
+
         if(command[0].equalsIgnoreCase(prefix + "addCountdownAlerts")){
+            configReader = new ConfigReader();
             if(PermissionsChecker.canRun(event.getMember(), event.getChannel(), PermissionLevel.BotManager)){
                 if(configReader.addCountdownChannelID(event.getChannel().getIdLong())){
                     messageConstructor.setSuccessColor();
@@ -65,6 +82,7 @@ public class CommandsLaunches extends ListenerAdapter {
         }
 
         if(command[0].equalsIgnoreCase(prefix + "removeCountdownAlerts")){
+            configReader = new ConfigReader();
             if(PermissionsChecker.canRun(event.getMember(), event.getChannel(), PermissionLevel.BotManager)){
                 if(configReader.removeCoundownChannelID(event.getChannel().getIdLong())){
                     messageConstructor.setSuccessColor();
@@ -76,6 +94,64 @@ public class CommandsLaunches extends ListenerAdapter {
             }else{
                 messageConstructor.setFailColor();
                 messageConstructor.setAuthor("You are not authorised to run this command");
+            }
+            messageConstructor.sendMessage(event.getChannel().getIdLong());
+        }
+
+        if(command[0].equalsIgnoreCase(prefix + "addLaunchAlert")){
+            configReader = new ConfigReader();
+
+            if(PermissionsChecker.canRun(event.getMember(), event.getChannel(), PermissionLevel.BotManager)) {
+                int minutes;
+                try {
+                    if (command[1] != null) {
+                        minutes = Integer.parseInt(command[1]);
+                        if (configReader.addCustomNotifications(event.getChannel().getIdLong(), minutes)) {
+                            messageConstructor.setSuccessColor();
+                            messageConstructor.setAuthor("Alert Added");
+                        } else {
+                            messageConstructor.setFailColor();
+                            messageConstructor.setAuthor("Alert Already Added");
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    messageConstructor.setAuthor("Please only supply a number!");
+                    messageConstructor.setFailColor();
+                    messageConstructor.sendMessage(event.getChannel().getIdLong());
+                }
+            }else{
+                messageConstructor.setFailColor();
+                messageConstructor.setAuthor("You are not authorised to run this command!");
+            }
+        messageConstructor.sendMessage(event.getChannel().getIdLong());
+        }
+
+        if(command[0].equalsIgnoreCase(prefix + "removeLaunchAlert")){
+            configReader = new ConfigReader();
+
+            if(PermissionsChecker.canRun(event.getMember(), event.getChannel(), PermissionLevel.BotManager)) {
+                int minutes;
+                try {
+                    if (command[1] != null) {
+                        minutes = Integer.parseInt(command[1]);
+                        if (configReader.removeCustomNotifications(event.getChannel().getIdLong(), minutes)) {
+                            messageConstructor.setSuccessColor();
+                            messageConstructor.setAuthor("Alert Removed");
+                        } else {
+                            messageConstructor.setFailColor();
+                            messageConstructor.setAuthor("Alert Doesn't Exist");
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    messageConstructor.setAuthor("Please only supply a number!");
+                    messageConstructor.setFailColor();
+                    messageConstructor.sendMessage(event.getChannel().getIdLong());
+                }
+            }else{
+                messageConstructor.setFailColor();
+                messageConstructor.setAuthor("You are not authorised to run this command!");
             }
             messageConstructor.sendMessage(event.getChannel().getIdLong());
         }

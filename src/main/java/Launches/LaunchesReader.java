@@ -33,11 +33,27 @@ public class LaunchesReader {
     }
 
     public LibraryObject getLaunches(int amount){
+        return getLaunches(amount, true);
+    }
+
+    public LibraryObject getLaunches(int amount, boolean upcoming){
         LibraryObject libraryObject = new LibraryObject();
-        String launchLibraryURL = "https://launchlibrary.net/1.3/launch/next/";
+
+        String launchLibraryURL = "";
+
+        if(upcoming) {
+            launchLibraryURL = "https://launchlibrary.net/1.3/launch/next/";
+        }else{
+            SimpleDateFormat currentDate = new SimpleDateFormat("yyyy-MM-dd");
+            currentDate.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+            currentDate.format(new Date());
+
+            launchLibraryURL = "https://launchlibrary.net/1.4.1/launch?startdate=1900-01-01&enddate="+ currentDate.format(new Date()) +"&sort=desc&mode=verbose&limit=";
+        }
 
         try {
-         libraryObject = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue(getJSONFromURL(launchLibraryURL + amount), LibraryObject.class);
+            libraryObject = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue(getJSONFromURL(launchLibraryURL + amount), LibraryObject.class);
         }catch (Exception e){
             System.out.println("ERROR GETTING LAUNCHES");
         }
@@ -47,16 +63,25 @@ public class LaunchesReader {
                 String status = "";
                 switch (libraryObject.launches.get(i).status){
                     case 1:
-                        status = "Green";
+                        status = "Launch is GO";
                         break;
                     case 2:
-                        status = "Red";
+                        status = "Launch is NO-GO";
                         break;
                     case 3:
                         status = "Success";
                         break;
                     case 4:
                         status = "Failed";
+                        break;
+                    case 5:
+                        status = "Unplanned Hold";
+                        break;
+                    case 6:
+                        status = "In Flight";
+                        break;
+                    case 7:
+                        status = "Partial Failure";
                         break;
                 }
                 
@@ -69,6 +94,36 @@ public class LaunchesReader {
         return null;
     }
 
+    public List<AgencyObject> getAgencies(){
+        AgenciesObject agenciesObject = new AgenciesObject();
+
+        String launchLibraryURL = "https://launchlibrary.net/1.4.1/agency?mode=verbose&islsp=1";
+
+        try {
+            agenciesObject = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue(getJSONFromURL(launchLibraryURL), AgenciesObject.class);
+        }catch (Exception e){
+            System.out.println("ERROR GETTING AGENCIES");
+        }
+
+        return agenciesObject.agencies;
+    }
+
+    public AgencyObject getAgencyByID(int agencyID){
+        AgenciesObject agenciesObject = new AgenciesObject();
+
+        String launchLibraryURL = "https://launchlibrary.net/1.4.1/agency?id=" + agencyID;
+
+        try{
+            agenciesObject = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue(getJSONFromURL(launchLibraryURL), AgenciesObject.class);
+        }catch (Exception e){
+            System.out.println("ERROR GETTING AGENCY BY ID");
+        }
+
+        AgencyObject agencyObject = agenciesObject.agencies.get(0);
+
+        return agencyObject;
+    }
+
     public LaunchObject getNextLaunch(){
         int launchCount = 0;
         LaunchObject currentLaunch = getLaunches(launchCount + 1).launches.get(launchCount);
@@ -78,6 +133,8 @@ public class LaunchesReader {
         }
         return currentLaunch;
     }
+
+
 
     public List<String> getTimeToLaunchData(LaunchObject launchObject){
         Date date = new Date();
@@ -92,9 +149,14 @@ public class LaunchesReader {
         }
 
         Duration timeToLaunch = Duration.between(now, date.toInstant());
+
         Long days = timeToLaunch.toDays();
         Long hours = timeToLaunch.toHours() - days * 24;
         Long minutes = timeToLaunch.toMinutes() - days * 24 * 60 - hours * 60;
+
+//        days=1l;
+//        hours=0l;
+//        minutes=0l;
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MMMM HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -107,6 +169,7 @@ public class LaunchesReader {
         launchTimeData.add(String.valueOf(days));
         launchTimeData.add(String.valueOf(hours));
         launchTimeData.add(String.valueOf(minutes));
+        launchTimeData.add(String.valueOf(timeToLaunch.toMinutes()));
 
         return launchTimeData;
     }

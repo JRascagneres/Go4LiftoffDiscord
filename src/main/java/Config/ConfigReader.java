@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigReader {
     ConfigObject config = null;
@@ -50,7 +47,14 @@ public class ConfigReader {
         return config.countdownChannelIDs;
     }
 
+    public Map<Integer, List<Long>> getCustomNotificationMap(){
+        return config.countdownCustomIDs;
+    }
+
     public Map<String, List<Long>> getUserNoficationMap(){
+        if(config.userNotifications == null){
+            config.userNotifications = new HashMap<String, List<Long>>();
+        }
         return config.userNotifications;
     }
 
@@ -111,9 +115,9 @@ public class ConfigReader {
     }
 
     public void addUserNotifications(String agency, Long userID){
-        if(getUserNoficationMap().get(agency) != null){
+        if (getUserNoficationMap().get(agency) != null) {
             getUserNoficationMap().get(agency).add(userID);
-        }else{
+        } else {
             getUserNoficationMap().put(agency, Collections.singletonList(userID));
         }
         saveJSONFile();
@@ -125,6 +129,33 @@ public class ConfigReader {
             getUserNoficationMap().remove(agency);
         }
         saveJSONFile();
+    }
+
+    public boolean addCustomNotifications(Long channelID, Integer minutes){
+        if(getCustomNotificationMap().containsKey(minutes) && getCustomNotificationMap().get(minutes).contains(channelID)){
+            return false;
+        }
+
+        if(getCustomNotificationMap().get(minutes) != null){
+            getCustomNotificationMap().get(minutes).add(channelID);
+        }else{
+            getCustomNotificationMap().put(minutes, Collections.singletonList(channelID));
+        }
+        saveJSONFile();
+        return true;
+    }
+
+    public boolean removeCustomNotifications(Long channelID, Integer minutes){
+        if(!getCustomNotificationMap().containsKey(minutes) && !getCustomNotificationMap().get(minutes).contains(channelID)){
+            return false;
+        }
+
+        getCustomNotificationMap().get(minutes).remove(channelID);
+        if(getCustomNotificationMap().get(minutes).isEmpty()){
+            getCustomNotificationMap().remove(minutes);
+        }
+        saveJSONFile();
+        return true;
     }
 
     public void saveJSONFile(){
